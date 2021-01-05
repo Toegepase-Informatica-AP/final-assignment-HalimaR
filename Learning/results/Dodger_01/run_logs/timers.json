@@ -1,0 +1,75 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1607940529",
+        "python_version": "3.8.5 (default, Sep  3 2020, 21:29:08) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Anaconda\\envs\\ml-agents\\Scripts\\mlagents-learn Dodger.yml --run-id Dodger_01 --force",
+        "mlagents_version": "0.21.1",
+        "mlagents_envs_version": "0.21.1",
+        "communication_protocol_version": "1.2.0",
+        "tensorflow_version": "2.3.1",
+        "numpy_version": "1.19.2",
+        "end_time_seconds": "1607940603"
+    },
+    "total": 73.76420820000001,
+    "count": 1,
+    "self": 0.005597000000008734,
+    "children": {
+        "run_training.setup": {
+            "total": 0.017459000000000113,
+            "count": 1,
+            "self": 0.017459000000000113
+        },
+        "TrainerController.start_learning": {
+            "total": 73.7411522,
+            "count": 1,
+            "self": 0.0016699999999900683,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 8.8527014,
+                    "count": 1,
+                    "self": 8.8527014
+                },
+                "TrainerController.advance": {
+                    "total": 60.1155898,
+                    "count": 1,
+                    "self": 1.1899999996956012e-05,
+                    "children": {
+                        "env_step": {
+                            "total": 60.115577900000005,
+                            "count": 1,
+                            "self": 60.00448000000001,
+                            "children": {
+                                "SubprocessEnvManager._take_step": {
+                                    "total": 0.11109789999999897,
+                                    "count": 1,
+                                    "self": 4.709999999974457e-05,
+                                    "children": {
+                                        "TFPolicy.evaluate": {
+                                            "total": 0.11105079999999923,
+                                            "count": 1,
+                                            "self": 0.11105079999999923
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "TrainerController._save_models": {
+                    "total": 4.771191000000002,
+                    "count": 1,
+                    "self": 0.005670100000003231,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 4.7655208999999985,
+                            "count": 1,
+                            "self": 4.7655208999999985
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

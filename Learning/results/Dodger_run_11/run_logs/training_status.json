@@ -1,0 +1,47 @@
+{
+    "Dodger": {
+        "checkpoints": [
+            {
+                "steps": 7449984,
+                "file_path": "results\\Dodger_run_11\\Dodger\\Dodger-7449984.nn",
+                "reward": -2.6557143601988042,
+                "creation_time": 1609861676.669117
+            },
+            {
+                "steps": 7499995,
+                "file_path": "results\\Dodger_run_11\\Dodger\\Dodger-7499995.nn",
+                "reward": -0.36857147089072634,
+                "creation_time": 1609861933.5591812
+            },
+            {
+                "steps": 7549972,
+                "file_path": "results\\Dodger_run_11\\Dodger\\Dodger-7549972.nn",
+                "reward": -1.6957143318972416,
+                "creation_time": 1609862187.036821
+            },
+            {
+                "steps": 7599998,
+                "file_path": "results\\Dodger_run_11\\Dodger\\Dodger-7599998.nn",
+                "reward": null,
+                "creation_time": 1609862452.283412
+            },
+            {
+                "steps": 7623653,
+                "file_path": "results\\Dodger_run_11\\Dodger\\Dodger-7623653.nn",
+                "reward": -0.37875002063810825,
+                "creation_time": 1609862577.8291686
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 7623653,
+            "file_path": "results\\Dodger_run_11\\Dodger.nn",
+            "reward": -0.37875002063810825,
+            "creation_time": 1609862577.8291686
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.1.0",
+        "mlagents_version": "0.21.1",
+        "tensorflow_version": "2.3.1"
+    }
+}

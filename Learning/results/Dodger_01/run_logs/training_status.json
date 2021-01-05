@@ -1,0 +1,23 @@
+{
+    "Dodger": {
+        "checkpoints": [
+            {
+                "steps": 0,
+                "file_path": "results\\Dodger_01\\Dodger\\Dodger-0.nn",
+                "reward": null,
+                "creation_time": 1607940603.2166965
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 0,
+            "file_path": "results\\Dodger_01\\Dodger.nn",
+            "reward": null,
+            "creation_time": 1607940603.2166965
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.1.0",
+        "mlagents_version": "0.21.1",
+        "tensorflow_version": "2.3.1"
+    }
+}

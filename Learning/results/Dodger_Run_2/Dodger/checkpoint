@@ -1,0 +1,3 @@
+model_checkpoint_path: "Dodger-2811448.ckpt"
+all_model_checkpoint_paths: "Dodger-2799970.ckpt"
+all_model_checkpoint_paths: "Dodger-2811448.ckpt"
