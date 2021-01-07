@@ -746,6 +746,63 @@ Dit is de one-pager dat werd opgemaakt voor de aanvang van het project.
 
 Er staat in de one-pager dat de AI's niet hetzelfde reward-systeem gaan hebben. Dit is niet meer het geval, de drie AI's delen hetzelfde reward-systeem, zodat ze elkaar niet zouden tegenwerken.
 
+## Training Methode
+
+Om de Ontwijkers te trainen hebben we volgende training configuratie gebruikt.
+
+__Dodger.yaml__
+
+```yaml
+behaviors:
+  Dodger:
+    trainer_type: ppo
+    max_steps: 5.0e8
+    time_horizon: 64
+    summary_freq: 10000
+    keep_checkpoints: 5
+    checkpoint_interval: 50000
+    
+    hyperparameters:
+      batch_size: 32
+      buffer_size: 9600
+      learning_rate: 3.0e-4
+      learning_rate_schedule: constant
+      beta: 5.0e-3
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+
+    network_settings:
+      num_layers: 2
+      hidden_units: 128
+      normalize: false
+      vis_encoder_type: simple
+
+    reward_signals:
+      extrinsic:
+        strength: 1.0
+        gamma: 0.99
+      curiosity:
+        strength: 0.02
+        gamma: 0.99
+        encoding_size: 256
+        learning_rate : 1e-3
+```
+
+De volgende commando's zijn nodig om de training uit te voeren:
+
+Om de training te starten:
+
+```c
+mlagents-learn Dodger.yaml --run-id [Naam van deze training]
+```
+
+Om de resultaten in grafieken te zien:
+
+```c
+tensorboard --logdir results
+```
+
 ## Resultaten
 
 Tijdens het trainen van de Agent hebben zijn er trainingen uitgevoerd met verschillende aanpassingen. Het doel is om de agents efficïent en correct te trainen zodat de agents correct werken in het spel.
@@ -834,3 +891,5 @@ De oorzaak van de negatieve resultaten is dat de logica om de ballen te werpen t
 
 Tijdens dit project hebben we dus een VR Trefbal game waarbij de speler ballen moet gooien naar Ontwijkers die getraint zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
 In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken.
+
+## Bronnen
