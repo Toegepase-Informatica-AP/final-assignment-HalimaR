@@ -117,12 +117,89 @@ Er staat in de one-pager dat de AI's niet hetzelfde reward-systeem gaan hebben. 
 
 ## Resultaten
 
+Tijdens het trainen van de Agent hebben zijn er trainingen uitgevoerd met verschillende aanpassingen. Het doel is om de agents efficïent en correct te trainen zodat de agents correct werken in het spel.
+
+### Training 1
+
+![Training1](./Afbeeldingen/Dodger_Run_1_Graph.png)
+
+Bij de eerste training werden al de parameters op de standaardwaarden gebruikt.
+
+__Gedragingen:__
+
+- De Ontwijkers groeperen in een hoek en duwen elkaar van het speelveld.
+- De Ontwijkers lopen naar de kant van de werper op het speelveld en kunnen vervolgens niet meer geraakt worden.
+- De Ontwijkers kijken niet naar de richting van de werper.
+
+Door deze gedragingen is de Cumulatieve Reward van de dodger zeer inconsistent zoals in de grafiek te zien is. Hieruit werd er besloten dat de omgeving en de Ontwijkers nog niet volledig klaar zijn om te trainen.
+
+### Training 2
+
+![Training2](./Afbeeldingen/Training2_Graph.png)
+
+__Aanpassingen in deze training:__
+
+- Extra Ray Perception sensoren die naar de grond kijken op de X en Y -as. Hierdoor hebben de Ontwijkers een beter zicht of ze op het speelveld staan.
+- De Ontwijkers straffen wanneer ze tegen elkaar botsen. Hierdoor moeten de Ontwijkers elkaar niet van het veld duwen.
+- De werper gooit de bal nauwkeuriger naar de ontwijkers. Hierdoor kunnen de Ontwijkers beter leren te ontwijken.
+
+__Gedragingen:__
+
+- De Ontwijkers blijven binnen het speelveld maar gaan nog steeds naar de kant van de werper op het speelveld.
+- De Ontwijkers kijken niet naar de richting van de werper.
+
+Uit de grafiek kan men afleiden dat de resultaten consistenter zijn. Het valt nog steeds op dat de resultaten niet positief zijn omdat de Ontwijkers de kant van de werper op het speelveld betreden.
+
+### Training 3
+
+![Training3](./Afbeeldingen/Training3_Graph.png)
+
+__Aanpassingen in deze training:__
+
+- Speelveld in 2 delen opgesplits zodat de kant van de werper en de kant van de ontwijkers verschillende tags hebben.
+- Tags van beide kanten van het speelveld toegevoegd aan de Ray Perception sensoren.
+- Enkel de nodige tags in de Ray Perception sensoren toegevoegd.
+
+__Gedragingen:__
+
+- De Ontwijkers blijven binnen het speelveld en gaan niet naar de kant van de werper.
+- De Ontwijkers kijken niet naar de richting van de werper.
+- De Ontwijkers verliezen veel Cummalatieve Reward doordat ze tegen elkaar botsen.
+
+Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Dit komt omdat de Ontwijkers niet naar de richting van de werper kijken en dus de ballen niet zien aankomen. Een andere reden waarom dit gebeurt is omdat de Ontwijkers tegen elkaar botsen om de bal te ontwijken en vervolgens een negatieve Cummalatieve Reward krijgen.
+
+### Training 4
+
+![Training4](./Afbeeldingen/Training4_Graph.png)
+
+__Aanpassingen in deze training:__
+
+- De punishment wanneer de Ontwijkers tegen elkaar botsen is verwijderd.
+
+__Gedragingen:__
+
+- De Ontwijkers kijken niet naar de richting van de werper.
+- De Ontwijkers verliezen de meeste Cummalatieve Reward door geraakt te worden door de bal.
+
+Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. De oorzaak hiervan is omdat de Ontwijkers niet altijd naar de juiste richting zien om de ballen te zien aankomen. Hierdoor worden ze geraakt en verliezen ze de meeste Cummalatieve Reward.
+
+### Training 5
+
+![Training5](./Afbeeldingen/Training5_Graph.png)
+
+__Aanpassingen in deze training:__
+
+- De Ontwijkers kunnen niet meer rond hun Y-as draaien.
+
+__Gedragingen:__
+
+- De Ontwijkers ontwijken de ballen beter omdat ze altijd naar de werper zien.
+- De Ontwijkers verliezen de meeste Cummalatieve Reward door geraakt te worden door de bal.
+
+Uit deze grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Ongeacht de negatieve resulaten ontwijken de Ontwijkers de ballen wel goed.
+De oorzaak van de negatieve resultaten is dat de logica om de ballen te werpen te nauwkeurig en te snel is. Hierdoor kunnen de Ontwijkers de ballen moeilijk ontwijken.
+
 ## Conclusie
 
-Tijdens dit project hebben we dus een VR Trefbal game gemaakt met behulp van AI en VR.
-
-*Kort overzicht resultaten overlopen (2-3 zinnen)*
-
-*Persoonlijke visie op de resultaten, betekenis van de resultaten*
-
-*Verbeteringen naar de toekomst toe*
+Tijdens dit project hebben we dus een VR Trefbal game waarbij de speler ballen moet gooien naar Ontwijkers die getraint zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
+In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken.
