@@ -172,7 +172,7 @@ void Start()
     }
 ```
 
-De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing` op false staat en of de `spawningPowerups` of false staat samen met `powerUpList`.
+De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing`, `spawningPowerups` en `powerUpList` op false staan.
 
 ```cs (Environment.cs)
 void Update()
@@ -202,7 +202,7 @@ void Update()
     }
 ```
 
-In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gerest. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de list niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt wordt de scoreboard continu weergegeven dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt is wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd van de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
+In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geupdate dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
 
 ```cs (Environment.cs)
  void FixedUpdate()
@@ -252,7 +252,7 @@ De `SpawnDodgersGameobject` methode spawnd de dodgers elke keer als een episode 
     }
 ```
 
-In de `ResetEnvironment` methode word het voledige environment gerest. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers en de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
+In de `ResetEnvironment` methode word het voledige environment gereset. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers, de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
 
 ```cs (Environment.cs)
  public void ResetEnvironment()
@@ -299,7 +299,7 @@ public void SpawnDodgers()
     }
 ```
 
-Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de time van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen.
+Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de tijd van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen aan de bal.
 
 ```cs (Environment.cs)
  IEnumerator BallSpawner()
@@ -370,7 +370,7 @@ IEnumerator PowerUpSpawner()
     }
 ```
 
-Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de list `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
+Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de lijst `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
 
 ```cs (Environment.cs)
  private void EndAllEpisodes()
