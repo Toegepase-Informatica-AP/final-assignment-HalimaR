@@ -6,47 +6,37 @@ using UnityEngine;
 
 public class Environment : MonoBehaviour
 {
-    public bool TrainingMode = true;
-    System.Random random = new System.Random();
-    private GameObject ballSpawnpointNonTraining;
-    public bool ballHasBeenTakenNonTraining;
-    //Episode
     public const float MAXTIME = 120f;
-    private float episodeTime = MAXTIME;
-    //BallThrow
-    //Toggle auto throwing balls of environment
     public float ballAverageSpawnTimer = 2f;
-    private float ballRespawnTime;
+    public bool TrainingMode = true;
+    public bool ballHasBeenTakenNonTraining;
+    public bool powerUpBall = false;
     public GameObject ballPrefab;
     public GameObject dodgerPrefab;
-    private GameObject balls; //Keep a list of all balls in environment
-    private bool throwing = true;
-    //private float standardZPosition = transform.localPosition.z + 18f;
-    private float standardYVelocity = 10f;
-    private float standardZVelocity = -20f;
-    //DodgerSpawns
+    public GameObject powerUpSpawnLocation;
+    public GameObject powerUpPrefab;
+    public List<GameObject> powerUpList;
     public List<Dodger> dodgersList;
+
+    private const float POWERUP_SPAWNTIMER = 15f;
+    private float episodeTime = MAXTIME;
+    private float ballRespawnTime;
+    private float currentScore = 0f;
+    private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
+    private float largeScale = 2f;
+    private float largeTimer = 10f;
+    private bool throwing = true;
+    private bool spawnDodgers;
+    private bool spawningPowerups = true;
+    private System.Random random = new System.Random();
+    private GameObject ballSpawnpointNonTraining;
+    private GameObject balls;
+    private GameObject dodgers;
     private Vector3 standardPositionDL;
     private Vector3 standardPositionDM;
     private Vector3 standardPositionDR;
-    private GameObject dodgers;
-    private bool spawnDodgers;
-    //Score
     private TextMeshPro scoreboard;
-    private float currentScore = 0f;
-    //DodgerControl
-    public string selectedDodger;
-    //PowerUps: Enlarge
-    private const float POWERUP_SPAWNTIMER = 15f;
-    private bool spawningPowerups = true;
-    public GameObject powerUpSpawnLocation;
     private BoxCollider powerUpSpawnBox;
-    public GameObject powerUpPrefab;
-    public List<GameObject> powerUpList;
-    private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
-    public bool powerUpBall = false;
-    private float largeScale = 3.5f;
-    private float largeTimer = 10f;
 
     // Start is called before the first frame update
     void Start()
@@ -56,9 +46,6 @@ public class Environment : MonoBehaviour
             ballHasBeenTakenNonTraining = true;
             ballSpawnpointNonTraining = transform.Find("BallSpawnPoint").gameObject;
         }
-
-
-        //newDodgers = transform.Find("Dodgers").gameObject;
         balls = transform.Find("Balls").gameObject;
         dodgersList = new List<Dodger>();
         ballRespawnTime = ballAverageSpawnTimer;
@@ -180,19 +167,16 @@ public class Environment : MonoBehaviour
     public void SpawnDodgers() 
     {
         //Set left dodger and spawn
-        Debug.Log("Spawn dodger left");
         GameObject dodgerLeft = Instantiate(dodgerPrefab, transform);
         dodgerLeft.transform.SetParent(dodgers.transform);
         dodgerLeft.transform.localPosition = standardPositionDL;
         dodgerLeft.name = "dodgerLeft";
         //Set middle dodger and spawn
-        Debug.Log("Spawn dodger middle");
         GameObject dodgerMiddle = Instantiate(dodgerPrefab, transform);
         dodgerMiddle.transform.SetParent(dodgers.transform);
         dodgerMiddle.transform.localPosition = standardPositionDM;
         dodgerMiddle.name = "dodgerMiddle";
         //Set right dodger and spawn
-        Debug.Log("Spawn dodger right");
         GameObject dodgerRight = Instantiate(dodgerPrefab, transform);
         dodgerRight.transform.SetParent(dodgers.transform);
         dodgerRight.transform.localPosition = standardPositionDR;
@@ -252,7 +236,6 @@ public class Environment : MonoBehaviour
         {
             ball.transform.localScale = new Vector3(largeScale, largeScale, largeScale);
         }
-
         ball.transform.SetParent(balls.transform);
         ball.transform.position = ballSpawnpointNonTraining.transform.localPosition;
         ballHasBeenTakenNonTraining = false;
@@ -276,7 +259,7 @@ public class Environment : MonoBehaviour
         }
         spawningPowerups = false;
     }
-    //
+    
     private void EndAllEpisodes()
     {
         if(dodgersList.Count > 0)

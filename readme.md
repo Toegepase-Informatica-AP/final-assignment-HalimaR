@@ -1,6 +1,12 @@
 # VR Trefbal Handleiding
 
-Chauvaux Nico, Collette Cédric, Messiaen Ruben, Van Nueten Wouter en Rahimi Halima
+| Naam | Studentnummer |
+| ---- | ------------- |
+| Collette Cédric | s107601 |
+| Van Nueten Wouter | s107229 |
+| Rahimi Halima | s101035 |
+| Chauvaux Nico | |
+| Messiaen Ruben | |
 
 ## Inleiding
 
@@ -27,7 +33,7 @@ Bij het eerst inladen van de VR omgeving zal de speler zich bevinden in een spor
 
 Het doel van het spel is dat de speler de ontwijkers uit schakelt met behulp van een ongelimiteerde hoeveelheid ballen die de speler kan gooien. Zolang de bal de ontwijker eerst raakt zal de ontwijker zijn uit geschakelt. Als de bal de grond eerst raakt en dan pas tegen de ontwijker telt dit dus niet mee. De ontwijkers zullen actief deze ballen proberen ontwijken. Zij hebben in tegenstelling tot de speler wel de vrijheid om zich te verplaatsen op hun zijde van het speelveld.
 
-Tijdens het spel zullen er "power-ups" tevoorschijn komen. Deze power-ups bevinden zich op willekeurige plekken boven het veld. Als de speler een power-up kan raken door er een bal tegen te gooien zal de power-up voor een gelimiteerde tijd geactiveerd worden. Deze power-up zorgt er voor dat de ballen die speler kan gooien groter zijn dan normaal. Met deze power-up zal het dus makkelijker zijn om de ontwijkers te raken.
+Tijdens het spel zullen er "power-ups" tevoorschijn komen. Deze power-ups bevinden zich op willekeurige plekken boven het veld. Als de speler een power-up kan raken door er een bal tegen te gooien zal die power-up voor een gelimiteerde tijd geactiveerd worden. Dat zorgt er dan voor dat de ballen die speler kan gooien groter zijn dan normaal. Hierdoor zal het dus makkelijker zijn om de ontwijkers te raken.
 
 Het spel duurt maximaal 120 seconden. Als de speler binnen deze tijd de drie ontwijkers krijgt uitgeschakelt is het spel gewonnen. Als de tijd op is voor alle ontwijkers zijn uitgeschakelt is het spel verloren en moet de speler opnieuw beginnen.
 
@@ -75,7 +81,7 @@ Het eerste wat men moet doen is het maken van een environment script:
 4. geef de script de naam "Environment"
 5. dan klikt men op `Create and Add`
 
-laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
+laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen.
 
 ```cs (Environment.cs)
     public const float MAXTIME = 120f;
@@ -111,23 +117,284 @@ laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op
     private BoxCollider powerUpSpawnBox;
 ```
 
-We beginnen met enkele publieke object-variabelen. De float `MAXTIME` toont aan hoelang elke episode zal duren. De `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een ball spawnt. Dan zijn er vier GameObjecten daar moet men de prefabs van de gameobjecten koppelen, dan heeft men ook nog twee lijsten `powerUpList` en `dodgersList`.
+We beginnen met enkele publieke object-variabelen.
 
-De volgende variablen zijn de private objecten. Er zijn enkele float objecten:
+- `MAXTIME` toont aan hoelang elke episode zal duren.
+- `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een bal spawnt
+- `TrainingMode` is bedoelt voor het trainen van de ML-agent, wanneer dit op true staat zullen de ballen vanzelf geworpen worden.
+- `ballHasBeenTakenNonTraining` zal de speler zelf de bal kunnen oprapen en de mogelijkheid hebben om te hooien.
+- `powerUpBall` wordt nagekeken of de bal een power-up heeft geraakt.
+- `ballPrefab` komt de prefab object van de bal.
+- `dodgerPrefab` komt de prefab object van de dodger.
+- `powerUpSpawnLocation` is de locatie waar in de power-ups mogen spawnen.
+- `powerUpPrefab` komt de prefab object van de power-up.
+- `powerUpList` lijst waar de power-ups in toegevoegd worden.
+- `dodgersList` lijst waar de dodgers in toegevoegd worden.
 
-- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooraleer een power-up zal spawnen.
+De volgende variablen zijn de private objecten.
+
+- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooralleer een power-up zal spawnen.
 - `episodeTime` toont hoelang elke episode zal duren.
-- `ballRespawnTime` geeft aan hoelang het duurt vooraleer een bal zal spawnen.
+- `ballRespawnTime` geeft aan hoelang het duurt vooralleer een bal zal spawnen.
 - `currentScore` toont de score.
 - `currentUpgradeTimer` zorgt ervoor dat er een timer is tussen het werpen van de bal.
 - `largeScale` zorgt ervoor wanneer een bal tegen een power-up komt de bal groter word.
 - `largeTimer`zorgt ervoor dat de power-up een bepaalde tijd actief blijft.
-
-Dan zijn er ook nog drie bools:
-
 - `throwing` is vooral bedoelt voor het trainen van de ML-agent, die zorgt ervoor dat de `ballSpawner` wordt aangeroepen.
 - `spawnDodgers` spawnt de dodgers.
 - `spawningPowerups` spant de power-ups
+- `random` is een variabelen die gebruikt wordt om de random positie van een dodger op te halen.
+- `ballSpawnpointNonTraining` wordt de spawn point gekoppeld.
+- `balls` wordt de GameObject bal gekoppeld.
+- `dodgers` wordt de GameObject dodger gekoppeld.
+- `standardPositionDL`, `standardPositionDM`, `standardPositionDR` zijn de spawn posities van de dodegers.
+- `scoreboard` geeft de score weer.
+- `powerUpSpawnBox` zorgt ervoor dat de power-ups niet buiten het speelveld spawnen.
+
+### initializatie van Environment
+
+In De Start methode gebeurt de initialisatie van enkele bovenstaande referenties en wordt als eerste opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Wat belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` staat. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene om het dan te laten trainen.
+
+```cs (Environment.cs)
+void Start()
+    {
+        if (!TrainingMode)
+        {
+            ballHasBeenTakenNonTraining = true;
+            ballSpawnpointNonTraining = transform.Find("BallSpawnPoint").gameObject;
+        }
+        balls = transform.Find("Balls").gameObject;
+        dodgersList = new List<Dodger>();
+        ballRespawnTime = ballAverageSpawnTimer;
+        StartCoroutine(PowerUpSpawner());
+        StartCoroutine(BallSpawner());
+        standardPositionDL = new Vector3(10f, 3f, -20f);
+        standardPositionDM = new Vector3(0f, 3f, -20f);
+        standardPositionDR = new Vector3(-10f, 3f, -20f);
+        SpawnDodgersGameobject();
+        SpawnDodgers();
+        scoreboard = transform.GetComponentInChildren<TextMeshPro>();
+        powerUpSpawnBox = powerUpSpawnLocation.GetComponent<BoxCollider>();
+    }
+```
+
+De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing`, `spawningPowerups` en `powerUpList` op false staan.
+
+```cs (Environment.cs)
+void Update()
+    {
+        if (throwing == false)
+        {
+            StartCoroutine(BallSpawner());
+            throwing = true;
+        }
+        if (spawningPowerups == false && powerUpList.Count() < 3)
+        {
+            StartCoroutine(PowerUpSpawner());
+            spawningPowerups = true;
+        }
+        if (powerUpBall)
+        {
+            largeTimer -= Time.deltaTime;
+            if (largeTimer <= 0)
+            {
+                powerUpBall = false;
+            }
+        }
+        if (spawnDodgers)
+        {
+            SpawnDodgers();
+        }
+    }
+```
+
+In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geupdate dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
+
+```cs (Environment.cs)
+ void FixedUpdate()
+    {
+        currentScore = 0f;
+        if(episodeTime >= 0)
+        {
+            if (dodgersList.Count == 0)
+            {
+                ResetEnvironment();
+            }
+            else
+            {
+                for (int counter = dodgersList.Count - 1; counter >= 0; counter--)
+                {
+                    if (!dodgersList[counter].isHit)
+                    {
+                        currentScore += dodgersList[counter].GetCumulativeReward();
+                    }
+                    else if (dodgersList[counter].isHit)
+                    {
+                        dodgersList[counter].EndEpisode();
+                        Destroy(dodgersList[counter].gameObject);
+                        dodgersList.Remove(dodgersList[counter]);
+                    }
+                }
+                scoreboard.text = currentScore.ToString("f3") + "\n" + episodeTime.ToString("f0");
+            }
+            episodeTime = episodeTime - Time.deltaTime;
+        } else
+        {
+            EndAllEpisodes();
+            ResetEnvironment();
+        }
+    }
+```
+
+De `SpawnDodgersGameobject` methode spawnd de dodgers elke keer als een episode beëindigd is. De dodgers worden willekeurig in hun speelveld geplatst.
+
+```cs (Environment.cs)
+ private void SpawnDodgersGameobject()
+    {
+        dodgers = new GameObject();
+        dodgers.name = "Dodgers";
+        dodgers.transform.SetParent(this.transform);
+        dodgers.transform.position = this.transform.position;
+    }
+```
+
+In de `ResetEnvironment` methode word het voledige environment gereset. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers, de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
+
+```cs (Environment.cs)
+ public void ResetEnvironment()
+    {
+        foreach (GameObject powerUp in powerUpList)
+        {
+            Destroy(powerUp);
+        }
+        foreach (Transform ball in balls.transform)
+        {
+            Destroy(ball.gameObject);
+        }
+        Destroy(dodgers.gameObject);
+        SpawnDodgersGameobject();
+        StopAllCoroutines();
+        episodeTime = MAXTIME;
+        currentUpgradeTimer = POWERUP_SPAWNTIMER;
+        spawnDodgers = true;
+        throwing = false;
+        spawningPowerups = false;
+        ballHasBeenTakenNonTraining = true;
+    }
+```
+
+De `SpawnDodgers` methode zorgt ervoor dat de dodgers terug respawen wanneer de `dodgersList` leeg is en of wanneer de episode eindigt. De drie dodgers worden één per één aangemaakt en aan de list `dodgersList` toegevoegd.
+
+```cs (Environment.cs)
+public void SpawnDodgers() 
+    {
+        GameObject dodgerLeft = Instantiate(dodgerPrefab, transform);
+        dodgerLeft.transform.SetParent(dodgers.transform);
+        dodgerLeft.transform.localPosition = standardPositionDL;
+        dodgerLeft.name = "dodgerLeft";
+        GameObject dodgerMiddle = Instantiate(dodgerPrefab, transform);
+        dodgerMiddle.transform.SetParent(dodgers.transform);
+        dodgerMiddle.transform.localPosition = standardPositionDM;
+        dodgerMiddle.name = "dodgerMiddle";
+        GameObject dodgerRight = Instantiate(dodgerPrefab, transform);
+        dodgerRight.transform.SetParent(dodgers.transform);
+        dodgerRight.transform.localPosition = standardPositionDR;
+        dodgerRight.name = "dodgerRight";
+        dodgersList = transform.GetComponentsInChildren<Dodger>(dodgers).ToList();
+        spawnDodgers = false;
+    }
+```
+
+Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de tijd van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen aan de bal.
+
+```cs (Environment.cs)
+ IEnumerator BallSpawner()
+    {
+        while (TrainingMode)
+        {
+            yield return new WaitForSeconds(ballRespawnTime);
+            ballRespawnTime = Random.Range(ballAverageSpawnTimer * 0.5f, ballAverageSpawnTimer * 1.5f);
+            GameObject ball = Instantiate(ballPrefab);
+            if (powerUpBall == true){
+                ball.transform.localScale = new Vector3(largeScale, largeScale, largeScale);
+            }
+            ball.transform.SetParent(balls.transform);
+            float ballX = Random.Range(transform.position.x -1f, transform.position.x + 1f);
+            float ballY = Random.Range(transform.position.y + 0.5f,transform.position.y + 3f);
+            float ballZ = transform.position.z + 18f;
+            Vector3 ballPositie = new Vector3(ballX, ballY, ballZ);
+            ball.transform.position = ballPositie;
+            Rigidbody ballRigidbody = ball.GetComponent<Rigidbody>();
+            int randomDodgerNumber = random.Next(0, dodgersList.Count());
+            GameObject randomDodger = dodgersList[randomDodgerNumber].gameObject;
+            Vector3 randomDodgerPosition = (randomDodger.transform.position - ball.transform.position).normalized;
+            Vector3 throwVector = new Vector3(randomDodgerPosition.x, randomDodgerPosition.y + 0.1f, randomDodgerPosition.z);
+            ballRigidbody.velocity = throwVector * 60f;
+        }
+        while (!TrainingMode)
+        {
+            if (ballHasBeenTakenNonTraining)
+            { 
+                SpawnBall();
+            }
+            yield return new WaitForSeconds(3f);
+        }
+        throwing = false;
+    }
+```
+
+De `SpawnBall` methode spawnd de ballen elke keer als een episode beëindigd is.
+
+```cs (Environment.cs)
+private void SpawnBall()
+    {
+        GameObject ball = Instantiate(ballPrefab);
+        ball.transform.SetParent(balls.transform);
+        ball.transform.position = ballSpawnpointNonTraining.transform.localPosition;
+        ballHasBeenTakenNonTraining = false;
+    }
+```
+
+Voor de `PowerUpSpawner` methode is ook gebruik gemaakt van `StartCoroutine`. Deze keer is het voor het respawnen van de power-ups. De power-ups worden in de list `powerUpList` toegevoegd.
+
+```cs (Environment.cs)
+IEnumerator PowerUpSpawner()
+    {
+        while (powerUpList.Count() < 3)
+        {
+            yield return new WaitForSeconds(currentUpgradeTimer);
+            GameObject largePowerUp = Instantiate(powerUpPrefab);
+            largePowerUp.GetComponent<EnlargeBallScript>().MyEnvironment = this;
+            powerUpList.Add(largePowerUp);
+            largePowerUp.transform.SetParent(GameObject.FindGameObjectWithTag("PowerUpList").transform);
+            float powerUpX = Random.Range(powerUpSpawnBox.bounds.min.x, powerUpSpawnBox.bounds.max.x);
+            float powerUpY = Random.Range(0.3f, powerUpSpawnBox.bounds.max.y);
+            float powerUpZ = Random.Range(powerUpSpawnBox.bounds.min.z, powerUpSpawnBox.bounds.max.z);
+            largePowerUp.transform.position = new Vector3(powerUpX, powerUpY, powerUpZ);        
+        }
+        spawningPowerups = false;
+    }
+```
+
+Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de lijst `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
+
+```cs (Environment.cs)
+ private void EndAllEpisodes()
+    {
+        if(dodgersList.Count > 0)
+        {
+            for (int counter = dodgersList.Count - 1; counter >= 0; counter--)
+            {
+                dodgersList[counter].EndEpisode();
+                if(dodgersList[counter] != null && dodgersList[counter].gameObject != null)
+                {
+                    Destroy(dodgersList[counter].gameObject);
+                }
+                dodgersList.RemoveAt(counter);
+            }
+        }
+    }
+```
 
 #### Speler
 
@@ -167,6 +434,8 @@ Dit zijn alle properties die in deze klasse worden gedefinieerd
 - `timePast` wordt gebruikt om te bepalen wanneer een dodger reward krijgt en/of van afgenomen wordt.
 - `isOnField` geeft aan of de ontwijker in het veld is of niet.
 
+De Initialize methode wordt standaard aangeroepen als de ontwijker wordt gespawned of met andere woorden dus geinitialiseerd.
+
 ```cs (Dodger.cs)
 public override void Initialize()
     {
@@ -180,8 +449,6 @@ public override void Initialize()
     }
 ```
 
-De Initialize methode wordt standaard aangeroepen als de ontwijker wordt gespawned of met andere woorden dus geinitialiseerd.
-
 De klasse erft over van de Agent klasse
 
 ```cs (Dodger.cs)
@@ -190,6 +457,8 @@ public class Dodger : Agent
 
 De Agent klasse (base van deze klasse) moet ook geinitialiseerd worden. Daarom is de eerste lijn `base.Initialize()`.
 Verder wordt hier de body aangevuld, de coroutine gestart die later wordt toe gelicht en de booleans op de juiste waarden gezet.
+
+De OnActionReceived methode is verantwoordelijk voor bepaalde acties uit te voeren bij bepaalde inputs. Dit wordt door MLAgents gebruikt en de AI kan deze acties aanspreken. Dankzij deze acties kunnen de ontwijkers dus bewegen.
 
 ```cs (Dodger.cs)
 public override void OnActionReceived(float[] vectorAction)
@@ -214,7 +483,7 @@ public override void OnActionReceived(float[] vectorAction)
     }
 ```
 
-Deze methode is verantwoordelijk voor bepaalde acties uit te voeren bij bepaalde inputs. Dit wordt door MLAgents gebruikt en de AI kan deze acties aanspreken. Dankzij deze acties kunnen de ontwijkers dus bewegen.
+De Heuristic methode geeft de mogelijkheid om de ontwijkers te besturen met zelf bepaalde inputs van het toetsenbord. Wanneer er een input wordt gedetecteerd zullen de acties van de OnActionReceived methode worden uitgevoerd.
 
 ```cs (Dodger.cs)
 public override void Heuristic(float[] actionsOut)
@@ -247,7 +516,7 @@ public override void Heuristic(float[] actionsOut)
     }
 ```
 
-De Heuristic methode geeft de mogelijkheid om de ontwijkers te besturen met zelf bepaalde inputs van het toetsenbord. Wanneer er een input wordt gedetecteerd zullen de acties van de OnActionReceived methode worden uitgevoerd.
+De spring actie is in een aparte methode zodat die makkelijk van meerdere plekken kan worden aangeroepen
 
 ```cs (Dodger.cs)
 private void Jump()
@@ -261,7 +530,7 @@ private void Jump()
     }
 ```
 
-De spring actie is in een aparte methode zodat die makkelijk van meerdere plekken kan worden aangeroepen
+Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen. Elk object heeft een tag ingesteld en wanneer de ontwijker iets aanraakt zal er hier worden gecontroleert wat er juist is geraakt en zal er dan correct op gereageerd worden.
 
 ```cs (Dodger.cs)
 public void OnCollisionEnter(Collision collision)
@@ -284,7 +553,7 @@ public void OnCollisionEnter(Collision collision)
     }
 ```
 
-Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen. Elk object heeft een tag ingesteld en wanneer de ontwijker iets aanraakt zal er hier worden gecontroleert wat er juist is geraakt en zal er dan correct op gereageerd worden.
+Deze coroutine bepaalt om de hoeveel seconden een reward zal worden gegeven of afgenomen aan de Agent. Hier gaat er on de seconde een boolean op true worden gezet. Deze boolean wordt dan in een andere methode gebruikt om te bepalen of er een reward mag worden gegeven of afgenomen
 
 ```cs (Dodger.cs)
  IEnumerator DelayMethode()
@@ -297,7 +566,7 @@ Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen.
     }
 ```
 
-Deze coroutine bepaalt om de hoeveel seconden een reward zal worden gegeven of afgenomen aan de Agent. Hier gaat er on de seconde een boolean op true worden gezet. Deze boolean wordt dan in een andere methode gebruikt om te bepalen of er een reward mag worden gegeven of afgenomen
+De FixedUpdate methode wordt elke seconden aangeroepen. Deze methode bepaalt voor een groot deel welke rewards er toegevoegd mogen worden zolang er genoeg tijd is gepasseerd (besproken in vorige methode).
 
 ```cs (Dodger.cs)
 private void FixedUpdate()
@@ -321,8 +590,6 @@ private void FixedUpdate()
         }
     }
 ```
-
-De FixedUpdate methode wordt elke seconden aangeroepen. Deze methode bepaalt voor een groot deel welke rewards er toegevoegd mogen worden zolang er genoeg tijd is gepasseerd (besproken in vorige methode).
 
 #### Bal
 
@@ -478,6 +745,146 @@ Dit is de one-pager dat werd opgemaakt voor de aanvang van het project.
 
 Er staat in de one-pager dat de AI's niet hetzelfde reward-systeem gaan hebben. Dit is niet meer het geval, de drie AI's delen hetzelfde reward-systeem, zodat ze elkaar niet zouden tegenwerken.
 
+## Training Methode
+
+Om de Ontwijkers te trainen hebben we volgende training configuratie gebruikt.
+
+### Dodger.yaml
+
+```yaml
+behaviors:
+  Dodger:
+    trainer_type: ppo
+    max_steps: 5.0e8
+    time_horizon: 64
+    summary_freq: 10000
+    keep_checkpoints: 5
+    checkpoint_interval: 50000
+    
+    hyperparameters:
+      batch_size: 32
+      buffer_size: 9600
+      learning_rate: 3.0e-4
+      learning_rate_schedule: constant
+      beta: 5.0e-3
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+
+    network_settings:
+      num_layers: 2
+      hidden_units: 128
+      normalize: false
+      vis_encoder_type: simple
+
+    reward_signals:
+      extrinsic:
+        strength: 1.0
+        gamma: 0.99
+      curiosity:
+        strength: 0.02
+        gamma: 0.99
+        encoding_size: 256
+        learning_rate : 1e-3
+```
+
+De volgende commando's zijn nodig om de training uit te voeren:
+
+Om de training te starten:
+
+```c
+mlagents-learn Dodger.yaml --run-id [Naam van deze training]
+```
+
+Om de resultaten in grafieken te zien:
+
+```c
+tensorboard --logdir results
+```
+
+## Resultaten
+
+Tijdens het trainen van de Agent hebben zijn er trainingen uitgevoerd met verschillende aanpassingen. Het doel is om de agents efficïent en correct te trainen zodat de agents correct werken in het spel.
+
+### Training 1
+
+![Training1](./Afbeeldingen/Dodger_Run_1_Graph.png)
+
+Bij de eerste training werden al de parameters op de standaardwaarden gebruikt.
+
+__Gedragingen:__
+
+- De Ontwijkers groeperen in een hoek en duwen elkaar van het speelveld.
+- De Ontwijkers lopen naar de kant van de werper op het speelveld en kunnen vervolgens niet meer geraakt worden.
+- De Ontwijkers kijken niet naar de richting van de werper.
+
+Door deze gedragingen is de Cumulatieve Reward van de dodger zeer inconsistent zoals in de grafiek te zien is. Hieruit werd er besloten dat de omgeving en de Ontwijkers nog niet volledig klaar zijn om te trainen.
+
+### Training 2
+
+![Training2](./Afbeeldingen/Training2_Graph.png)
+
+__Aanpassingen in deze training:__
+
+- Extra Ray Perception sensoren die naar de grond kijken op de X en Y -as. Hierdoor hebben de Ontwijkers een beter zicht of ze op het speelveld staan.
+- De Ontwijkers straffen wanneer ze tegen elkaar botsen. Hierdoor moeten de Ontwijkers elkaar niet van het veld duwen.
+- De werper gooit de bal nauwkeuriger naar de ontwijkers. Hierdoor kunnen de Ontwijkers beter leren te ontwijken.
+
+__Gedragingen:__
+
+- De Ontwijkers blijven binnen het speelveld maar gaan nog steeds naar de kant van de werper op het speelveld.
+- De Ontwijkers kijken niet naar de richting van de werper.
+
+Uit de grafiek kan men afleiden dat de resultaten consistenter zijn. Het valt nog steeds op dat de resultaten niet positief zijn omdat de Ontwijkers de kant van de werper op het speelveld betreden.
+
+### Training 3
+
+![Training3](./Afbeeldingen/Training3_Graph.png)
+
+__Aanpassingen in deze training:__
+
+- Speelveld in 2 delen opgesplits zodat de kant van de werper en de kant van de ontwijkers verschillende tags hebben.
+- Tags van beide kanten van het speelveld toegevoegd aan de Ray Perception sensoren.
+- Enkel de nodige tags in de Ray Perception sensoren toegevoegd.
+
+__Gedragingen:__
+
+- De Ontwijkers blijven binnen het speelveld en gaan niet naar de kant van de werper.
+- De Ontwijkers kijken niet naar de richting van de werper.
+- De Ontwijkers verliezen veel Cummalatieve Reward doordat ze tegen elkaar botsen.
+
+Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Dit komt omdat de Ontwijkers niet naar de richting van de werper kijken en dus de ballen niet zien aankomen. Een andere reden waarom dit gebeurt is omdat de Ontwijkers tegen elkaar botsen om de bal te ontwijken en vervolgens een negatieve Cummalatieve Reward krijgen.
+
+### Training 4
+
+![Training4](./Afbeeldingen/Training4_Graph.png)
+
+__Aanpassingen in deze training:__
+
+- De punishment wanneer de Ontwijkers tegen elkaar botsen is verwijderd.
+
+__Gedragingen:__
+
+- De Ontwijkers kijken niet naar de richting van de werper.
+- De Ontwijkers verliezen de meeste Cummalatieve Reward door geraakt te worden door de bal.
+
+Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. De oorzaak hiervan is omdat de Ontwijkers niet altijd naar de juiste richting zien om de ballen te zien aankomen. Hierdoor worden ze geraakt en verliezen ze de meeste Cummalatieve Reward.
+
+### Training 5
+
+![Training5](./Afbeeldingen/Training5_Graph.png)
+
+__Aanpassingen in deze training:__
+
+- De Ontwijkers kunnen niet meer rond hun Y-as draaien.
+
+__Gedragingen:__
+
+- De Ontwijkers ontwijken de ballen beter omdat ze altijd naar de werper zien.
+- De Ontwijkers verliezen de meeste Cummalatieve Reward door geraakt te worden door de bal.
+
+Uit deze grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Ongeacht de negatieve resulaten ontwijken de Ontwijkers de ballen wel goed.
+De oorzaak van de negatieve resultaten is dat de logica om de ballen te werpen te nauwkeurig en te snel is. Hierdoor kunnen de Ontwijkers de ballen moeilijk ontwijken.
 
 ## VR instellingen
 
@@ -518,18 +925,13 @@ Vervolgens is er nog een bevestiging te zien als het .apk file correct op de que
 
 Ga naar: "Apps > Unknown sources" om de geïnstalleerde game terug te vinden.
 
-## Resultaten
-
 ## Conclusie
 
-Tijdens dit project hebben we dus een VR Trefbal game gemaakt met behulp van AI en VR.
-
-*Kort overzicht resultaten overlopen (2-3 zinnen)*
-
-*Persoonlijke visie op de resultaten, betekenis van de resultaten*
+Tijdens dit project hebben we dus een VR Trefbal game waarbij de speler ballen moet gooien naar Ontwijkers die getraint zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
+In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken.
 
 *Verbeteringen naar de toekomst toe*
 
-## Bronvermelding
+## Bronnen
 
 - **Oculus Link Cable** - https://uploadvr.com/oculus-link-recommended-usb-cable/
