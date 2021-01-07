@@ -5,8 +5,8 @@ using UnityEngine;
 public class Dodger : Agent
 {
     //Movement speed and Rotation
-    public float MovingSpeed = 5.0f;
-    public float Force = 10.0f;
+    public float movingSpeed = 5.0f;
+    public float force = 10.0f;
 
     //Properties
     private Rigidbody body;
@@ -30,13 +30,13 @@ public class Dodger : Agent
         //Forward backward
         if (vectorAction[0] != 0)
         {
-            Vector3 translation = transform.forward * MovingSpeed * (vectorAction[0] * 2 - 3) * Time.deltaTime;
+            Vector3 translation = transform.forward * movingSpeed * (vectorAction[0] * 2 - 3) * Time.deltaTime;
             transform.Translate(translation, Space.World);
         }
         //Move sidewards
         if (vectorAction[1] != 0)
         {
-            Vector3 translation = transform.right * MovingSpeed * (vectorAction[1] * 2 - 3) * Time.deltaTime;
+            Vector3 translation = transform.right * movingSpeed * (vectorAction[1] * 2 - 3) * Time.deltaTime;
             transform.Translate(translation, Space.World);
         }
         //Jump
@@ -79,7 +79,7 @@ public class Dodger : Agent
         if (canJump)
         {
             canJump = false;
-            body.AddForce(Vector3.up * Force, ForceMode.Impulse);
+            body.AddForce(Vector3.up * force, ForceMode.Impulse);
         }
     }
     public void OnCollisionEnter(Collision collision)
