@@ -27,7 +27,7 @@ Bij het eerst inladen van de VR omgeving zal de speler zich bevinden in een spor
 
 Het doel van het spel is dat de speler de ontwijkers uit schakelt met behulp van een ongelimiteerde hoeveelheid ballen die de speler kan gooien. Zolang de bal de ontwijker eerst raakt zal de ontwijker zijn uit geschakelt. Als de bal de grond eerst raakt en dan pas tegen de ontwijker telt dit dus niet mee. De ontwijkers zullen actief deze ballen proberen ontwijken. Zij hebben in tegenstelling tot de speler wel de vrijheid om zich te verplaatsen op hun zijde van het speelveld.
 
-Tijdens het spel zullen er "power-ups" tevoorschijn komen. Deze power-ups bevinden zich op willekeurige plekken boven het veld. Als de speler een power-up kan raken door er een bal tegen te gooien zal de power-up voor een gelimiteerde tijd geactiveerd worden. Deze power-up zorgt er voor dat de ballen die speler kan gooien groter zijn dan normaal. Met deze power-up zal het dus makkelijker zijn om de ontwijkers te raken.
+Tijdens het spel zullen er "power-ups" tevoorschijn komen. Deze power-ups bevinden zich op willekeurige plekken boven het veld. Als de speler een power-up kan raken door er een bal tegen te gooien zal die power-up voor een gelimiteerde tijd geactiveerd worden. Dat zorgt er dan voor dat de ballen die speler kan gooien groter zijn dan normaal. Hierdoor zal het dus makkelijker zijn om de ontwijkers te raken.
 
 Het spel duurt maximaal 120 seconden. Als de speler binnen deze tijd de drie ontwijkers krijgt uitgeschakelt is het spel gewonnen. Als de tijd op is voor alle ontwijkers zijn uitgeschakelt is het spel verloren en moet de speler opnieuw beginnen.
 
@@ -75,7 +75,7 @@ Het eerste wat men moet doen is het maken van een environment script:
 4. geef de script de naam "Environment"
 5. dan klikt men op `Create and Add`
 
-laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
+laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen.
 
 ```cs (Environment.cs)
     public const float MAXTIME = 120f;
@@ -111,7 +111,7 @@ laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op
     private BoxCollider powerUpSpawnBox;
 ```
 
-We beginnen met enkele publieke object-variabelen. De float `MAXTIME` toont aan hoelang elke episode zal duren. De `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een ball spawnt. Dan zijn er vier GameObjecten daar moet men de prefabs van de gameobjecten koppelen, dan heeft men ook nog twee lijsten `powerUpList` en `dodgersList`.
+We beginnen met enkele publieke object-variabelen.
 
 - `MAXTIME` toont aan hoelang elke episode zal duren.
 - `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een bal spawnt
@@ -147,7 +147,7 @@ De volgende variablen zijn de private objecten.
 
 ### initializatie van Environment
 
-De start methode wordt als eerste en één keer opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Bij de Start methode gebeurt de initialisatie van enkele bovenstaande referenties. Wat wel belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` moet. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene.
+In De Start methode gebeurt de initialisatie van enkele bovenstaande referenties en wordt als eerste opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Wat belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` staat. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene om het dan te laten trainen.
 
 ```cs (Environment.cs)
 void Start()
@@ -172,7 +172,7 @@ void Start()
     }
 ```
 
-De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing` op false staat en of de `spawningPowerups` of false staat samen met `powerUpList`.
+De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing`, `spawningPowerups` en `powerUpList` op false staan.
 
 ```cs (Environment.cs)
 void Update()
@@ -202,7 +202,7 @@ void Update()
     }
 ```
 
-In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gerest. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de list niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt wordt de scoreboard continu weergegeven dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt is wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd van de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
+In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geupdate dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
 
 ```cs (Environment.cs)
  void FixedUpdate()
@@ -252,7 +252,7 @@ De `SpawnDodgersGameobject` methode spawnd de dodgers elke keer als een episode 
     }
 ```
 
-In de `ResetEnvironment` methode word het voledige environment gerest. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers en de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
+In de `ResetEnvironment` methode word het voledige environment gereset. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers, de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
 
 ```cs (Environment.cs)
  public void ResetEnvironment()
@@ -286,12 +286,10 @@ public void SpawnDodgers()
         dodgerLeft.transform.SetParent(dodgers.transform);
         dodgerLeft.transform.localPosition = standardPositionDL;
         dodgerLeft.name = "dodgerLeft";
-        Debug.Log("Spawn dodger middle");
         GameObject dodgerMiddle = Instantiate(dodgerPrefab, transform);
         dodgerMiddle.transform.SetParent(dodgers.transform);
         dodgerMiddle.transform.localPosition = standardPositionDM;
         dodgerMiddle.name = "dodgerMiddle";
-        Debug.Log("Spawn dodger right");
         GameObject dodgerRight = Instantiate(dodgerPrefab, transform);
         dodgerRight.transform.SetParent(dodgers.transform);
         dodgerRight.transform.localPosition = standardPositionDR;
@@ -301,7 +299,7 @@ public void SpawnDodgers()
     }
 ```
 
-Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de time van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen.
+Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de tijd van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen aan de bal.
 
 ```cs (Environment.cs)
  IEnumerator BallSpawner()
@@ -372,7 +370,7 @@ IEnumerator PowerUpSpawner()
     }
 ```
 
-Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de list `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
+Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de lijst `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
 
 ```cs (Environment.cs)
  private void EndAllEpisodes()
