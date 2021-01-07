@@ -332,7 +332,7 @@ De bal is het voorwerp dat de speler kan gooien om de ontwijkers en de power-ups
 
 Het volgende script dat moet aangemaakt worden is het Ballhit script. Dit is het dat ervoor zorgt dat de bal zijn eigenschappen veranderen en het geluid afspeelt als de bal iets raakt.
 
-```cs (Ballhitscript.cs)
+```cs (Ballhitscript.cs properties)
     private bool startCount = false;
     private bool hasMoved = false;
     private float counter = 5f;
@@ -348,11 +348,95 @@ Het volgende script dat moet aangemaakt worden is het Ballhit script. Dit is het
 - `InitialPosition`: De positie waarin de bal begint op het veld.
 - `Environment`: De environment waarin de bal moet spawnen.
 
+```cs (Ballhitscript.cs )
+    void OnCollisionEnter(Collision collision)
+    {
+        gameObject.GetComponent<AudioSource>().Play();
+        startCount = true;
+    }
+```
+
+De bal maakt een geluid als het iets raakt.
+
+```cs (Ballhitscript.cs update)
+void Update()
+    {
+        if (initialPostion != this.transform.position && !hasMoved)
+        {
+            hasMoved = true;
+            body.useGravity = true;
+            environment.ballHasBeenTakenNonTraining = true;
+        }
+        //Set ball to hazard when the countdown started
+        if (startCount == true)
+        {
+            transform.gameObject.tag = "Hazard";
+            counter -= Time.deltaTime;
+            //Destroy ball if countdown ended
+            if (counter <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+```
+
+De bal krijgt zwaartekracht als hij niet meer op zijn initiële plek is. Als de bal iets heeft geraakt begint de timer te lopen zodat de bal despawned en kan de bal geen ontwijkers meer van het veld verwijderen.
+
 #### Power-up
 
-![Bal](./Afbeeldingen/Power-up.jpg)
+![Power-Up](./Afbeeldingen/Power-up.jpg)
 
 De power-up zorgt ervoor dat de ballen die gegooid worden gedurende een korte tijd groter worden. Zo heeft de speler meer kans om de ontwijkers te raken. Deze gebruikt de bal prefab samen met een +-vormig gameobject dat bestaat uit twee langwerpige Cubes.
+
+De power-up bevat de twee volgende scripts.
+
+##### EnlargeBall
+
+```cs (EnlargeBall.cs Properties)
+public Environment MyEnvironment; 
+```
+
+De enige property is de environment waarin de bal zich bevind.
+
+```cs (EnlargeBall.cs OnTriggerEnter)
+private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Ball")
+        {
+            //Delete powerup from powerup list in environment 
+            MyEnvironment.powerUpList.Remove(gameObject);
+            Destroy(gameObject);
+            MyEnvironment.powerUpBall = true;
+        }
+    }
+```
+
+Als de powerup geraakt wordt, wordt deze verwijdert en worden de ballen groter.
+
+##### Rotate Around
+
+```cs (RotateAround.cs)
+public Transform target;
+    public int speed;
+    // Start is called before the first frame update
+    void Start()
+    {
+        if (target == null)
+        {
+            target = this.gameObject.transform;
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        transform.RotateAround(target.transform.position, target.transform.up, speed * Time.deltaTime);
+    }
+}
+```
+
+Dit simpel script zorgt ervoor dat een object rond zichzelf kan draaien of rond een object dat wordt meegegeven aan de parameter "target". Met speed kan je bepalen hoe snel het object rond zichzelf draait of rond het opgegeven object.
 
 ### Beschrijving gedragingen van de objecten
 
