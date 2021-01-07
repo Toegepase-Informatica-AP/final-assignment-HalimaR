@@ -63,13 +63,13 @@ De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij o
 
 ![Speelveld](./Afbeeldingen/Speelveld.jpg)
 
-Het speelveld is een zaal met tribunes en toeschouwers. De toeschouwers hebben geen invloed op het spel. Alleen de grond (rood), speelveld (groen) en de middenlijn die het speelveld verdeelt in twee delen (wit) zijn van belang voor de ontwijker.
+Het speelveld is een zaal met tribunes en toeschouwers. De toeschouwers hebben geen invloed op het spel. Alleen de grond (rood), het speelveld (groen) en de middenlijn die het speelveld verdeelt in twee delen (wit) zijn van belang voor de ontwijker.
 
-Het eerste wat men moet doen is het maken van een environment de script:
+Het eerste wat men moet doen is het maken van een environment script:
 
 1. Selecteer het speelveld in dit geval zal dit de Gym zijn.
 2. In de inspector klikt men op `Add Component`.
-3. In de components lijst klikt men op `New Script` (dit bevind zich onder aan)
+3. In de components lijst klikt men op `New Script` (dit bevindt zich onder aan)
 4. geef de script de naam "Environment"
 5. dan klikt men op `Create and Add`
 
@@ -113,9 +113,9 @@ We beginnen met enkele publieke object-variabelen. De float `MAXTIME` toont aan 
 
 De volgende variablen zijn de private objecten. Er zijn enkele float objecten:
 
-- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooralleer een power-up zal spawnen.
+- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooraleer een power-up zal spawnen.
 - `episodeTime` toont hoelang elke episode zal duren.
-- `ballRespawnTime` geeft aan hoelang het duurt vooralleer een bal zal spawnen.
+- `ballRespawnTime` geeft aan hoelang het duurt vooraleer een bal zal spawnen.
 - `currentScore` toont de score.
 - `currentUpgradeTimer` wordt telkens terug
 - `largeScale`

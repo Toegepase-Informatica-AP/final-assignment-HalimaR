@@ -6,7 +6,6 @@ public class Dodger : Agent
 {
     //Movement speed and Rotation
     public float MovingSpeed = 5.0f;
-    public float RotationSpeed = 5.0f;
     public float Force = 10.0f;
 
     //Properties
