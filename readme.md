@@ -73,7 +73,7 @@ Het eerste wat men moet doen is het maken van een environment script:
 4. geef de script de naam "Environment"
 5. dan klikt men op `Create and Add`
 
-laten we nu de script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent de script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
+laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
 
 ```cs (Environment.cs)
     public const float MAXTIME = 120f;
@@ -117,15 +117,15 @@ De volgende variablen zijn de private objecten. Er zijn enkele float objecten:
 - `episodeTime` toont hoelang elke episode zal duren.
 - `ballRespawnTime` geeft aan hoelang het duurt vooraleer een bal zal spawnen.
 - `currentScore` toont de score.
-- `currentUpgradeTimer` wordt telkens terug
-- `largeScale`
-- `largeTimer`
+- `currentUpgradeTimer` zorgt ervoor dat er een timer is tussen het werpen van de bal.
+- `largeScale` zorgt ervoor wanneer een bal tegen een power-up komt de bal groter word.
+- `largeTimer`zorgt ervoor dat de power-up een bepaalde tijd actief blijft.
 
 Dan zijn er ook nog drie bools:
 
-- `throwing`
-- `spawnDodgers`
-- `spawningPowerups`
+- `throwing` is vooral bedoelt voor het trainen van de ML-agent, die zorgt ervoor dat de `ballSpawner` wordt aangeroepen.
+- `spawnDodgers` spawnt de dodgers.
+- `spawningPowerups` spant de power-ups
 
 #### Speler
 
@@ -138,6 +138,28 @@ De speler heeft op zich niet veel nut, maar wordt gebruikt bij de trainingen van
 ![Ontwijker](./Afbeeldingen/Ontwijker.jpg)
 
 De ontwijker is het object waarop de AI zal worden toegepast. Deze zal aan de hand van de beschikbare acties, beloningen en observaties zo lang mogelijk proberen te overleven en de ballen te ontwijken.
+
+Het volgende script dat moet aangemaakt worden is het Dodger script. Dit is het script dat de ontwijker en dus ook AI zal aansturen.
+
+Dit zijn alle properties die in deze klasse worden gedefinieerd
+
+```cs (Dodger.cs)
+    //Movement speed and Rotation
+    public float MovingSpeed = 5.0f;
+    public float RotationSpeed = 5.0f;
+    public float Force = 10.0f;
+
+    //Properties
+    private Rigidbody body;
+    private bool canJump;
+    public bool isHit;
+    private bool timePast;
+    private bool isOnField;
+```
+
+Zoals aangegeven door de comment hebben de eerste drie properties te maken met de beweging van de ontwijker.
+
+- `MovingSpeed` Bepaalt de snelheid waarin de ontwijker kan lopen
 
 #### Bal
 
