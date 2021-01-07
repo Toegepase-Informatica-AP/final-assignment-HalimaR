@@ -147,7 +147,7 @@ De volgende variablen zijn de private objecten.
 
 ### initializatie van Environment
 
-De start methode wordt als eerste en één keer opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Bij de Start methode gebeurt de initialisatie van enkele bovenstaande referenties. Wat wel belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` moet. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene.
+In De Start methode gebeurt de initialisatie van enkele bovenstaande referenties en wordt als eerste opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Wat belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` staat. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene om het dan te laten trainen.
 
 ```cs (Environment.cs)
 void Start()
