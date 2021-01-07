@@ -898,9 +898,52 @@ __Gedragingen:__
 Uit deze grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Ongeacht de negatieve resulaten ontwijken de Ontwijkers de ballen wel goed.
 De oorzaak van de negatieve resultaten is dat de logica om de ballen te werpen te nauwkeurig en te snel is. Hierdoor kunnen de Ontwijkers de ballen moeilijk ontwijken.
 
+## VR instellingen
+
+### Unity instellingen
+
+Om een VR applicatie te creëren voor de Oculus Quest 2 dient er een .apk file gebuild te worden. Maar eerst moet de package: "XR Interaction Toolkit" geïnstalleerd worden via de package manager. De build settings dienen vervolgens veranderd te worden. "File  > Build Settings > Android > Switch Platform".
+
+![One-pager](./Afbeeldingen/Build_Settings.png)
+
+Vervolgens dienen de player settings voor Oculus nog geconfigureerd te worden. "Player Settings > XR Plug-in Management > Android Settings" en vink "Oculus"aan.
+
+Nu de instelling klaar zijn, wordt er een XR rig voor de speler toegevoegd. Deze wordt op de locatie gezet waar de speler staat. Voor VR Dodgeball mag dit een "stationary XR Rig" zijn.
+
+![One-pager](./Afbeeldingen/add_XR_Rig.png)
+
+Wanneer het Unity project klaar is om in de Quest geladen te worden kan het .apk file gebuild worden. "File > Build Settings > Android > Build".
+
+### Quest instellingen
+
+Voor het mogelijk is om .apk applicaties te installeren op de Quest 2, moet developer modus worden ingeschakelt voor de de headset. "Smartphone Oculus Applicatie > Settings > OculusQuest 2 [*Model Number*] > More Settings > Developer Mode". Verbindt vervolgens de headset met USB aan een Computer en bevestig de pop-up in de headset.
+
+![One-pager](./Afbeeldingen/data_access.jpeg)
+![One-pager](./Afbeeldingen/OculusLinkCable-Anker.png)
+
+### SideQuest instellingen
+
+Om .apk files op de Quest te laden is een externe applicatie nodig: "SideQuest". In de applicatie is er een zichtbaar signaal dat aangeeft wanneer de Quest correct is verbonden.
+
+![One-pager](./Afbeeldingen/connected_quest.png)
+
+Laad vervolgens het .apk file in door op het symbool rechts bovenaan te klikken.
+
+![One-pager](./Afbeeldingen/inladen_quest.png)
+
+Vervolgens is er nog een bevestiging te zien als het .apk file correct op de quest is geladen.
+
+### Applicatie starten
+
+Ga naar: "Apps > Unknown sources" om de geïnstalleerde game terug te vinden.
+
 ## Conclusie
 
 Tijdens dit project hebben we dus een VR Trefbal game waarbij de speler ballen moet gooien naar Ontwijkers die getraint zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
 In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken.
 
+*Verbeteringen naar de toekomst toe*
+
 ## Bronnen
+
+- **Oculus Link Cable** - https://uploadvr.com/oculus-link-recommended-usb-cable/
