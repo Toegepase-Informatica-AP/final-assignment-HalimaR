@@ -452,7 +452,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &5486334123537102829
 MonoBehaviour:
@@ -469,7 +469,7 @@ MonoBehaviour:
   m_BrainParameters:
     VectorObservationSize: 1
     NumStackedVectorObservations: 1
-    VectorActionSize: 03000000030000000300000002000000
+    VectorActionSize: 030000000300000002000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
   m_Model: {fileID: 5022602860645237092, guid: c1d25c21ca6aaaa43a62a3be877aab96, type: 3}

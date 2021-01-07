@@ -43,16 +43,16 @@ public class Dodger : Agent
             Vector3 translation = transform.right * MovingSpeed * (vectorAction[1] * 2 - 3) * Time.deltaTime;
             transform.Translate(translation, Space.World);
         }
-
+        /*
         //Rotation
         if (vectorAction[2] != 0)
         {
             float rotation = RotationSpeed * (vectorAction[2] * 2 - 3) * Time.deltaTime;
             transform.Rotate(0, rotation, 0);
         }
-
+        */
         //Jump
-        if (vectorAction[3] != 0)
+        if (vectorAction[2] != 0)
         {
             Jump();
         }
@@ -70,7 +70,7 @@ public class Dodger : Agent
         actionsOut[0] = 0f;
         actionsOut[1] = 0f;
         actionsOut[2] = 0f;
-        actionsOut[3] = 0f;
+        //actionsOut[3] = 0f;
 
         if (Input.GetKey(KeyCode.Z)) // Moving fwd
         {
@@ -88,6 +88,7 @@ public class Dodger : Agent
         {
             actionsOut[1] = 2f;
         }
+        /*
         else if (Input.GetKey(KeyCode.A)) // Rotate left
         {
             actionsOut[2] = 1f;
@@ -96,9 +97,10 @@ public class Dodger : Agent
         {
             actionsOut[2] = 2f;
         }
+        */
         else if (Input.GetKey(KeyCode.Space)) // Jump
         {
-            actionsOut[3] = 1f;
+            actionsOut[2] = 1f;
         }
     }
 
@@ -127,10 +129,6 @@ public class Dodger : Agent
         {
             AddReward(-0.5f);
             isHit = true;
-        }
-        if(collision.gameObject.tag == "Dodger")
-        {
-            AddReward(-0.5f);
         }
     }
 
