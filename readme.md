@@ -111,7 +111,7 @@ laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op
     private BoxCollider powerUpSpawnBox;
 ```
 
-We beginnen met enkele publieke object-variabelen. De float `MAXTIME` toont aan hoelang elke episode zal duren. De `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een ball spawnt. Dan zijn er vier GameObjecten daar moet men de prefabs van de gameobjecten koppelen, dan heeft men ook nog twee lijsten `powerUpList` en `dodgersList`.
+We beginnen met enkele publieke object-variabelen.
 
 - `MAXTIME` toont aan hoelang elke episode zal duren.
 - `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een bal spawnt
