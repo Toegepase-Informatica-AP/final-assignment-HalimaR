@@ -23,7 +23,13 @@ Voor het spel werkende krijgen zijn er verschillende installaties vereist:
 
 ### Spelverloop
 
-Tijdens het spel moet de speler met gebruik van de VR headset en controllers drie ontwijkers raken met een bal. De speler kan ook een power-up raken met de bal, waardoor de bal gedurende een bepaalde tijd groter wordt. Het spel eindigt als de drie ontwijkers zijn geraakt.
+Bij het eerst inladen van de VR omgeving zal de speler zich bevinden in een sportzaal op een speelveld. De speler zal gecentreerd op een helft van dat speelveld staan. Aan de andere kant van het speelveld bevinden zich drie rode pion achtige firguren. Dit zijn de ontwijkers.
+
+Het doel van het spel is dat de speler de ontwijkers uit schakelt met behulp van een ongelimiteerde hoeveelheid ballen die de speler kan gooien. Zolang de bal de ontwijker eerst raakt zal de ontwijker zijn uit geschakelt. Als de bal de grond eerst raakt en dan pas tegen de ontwijker telt dit dus niet mee. De ontwijkers zullen actief deze ballen proberen ontwijken. Zij hebben in tegenstelling tot de speler wel de vrijheid om zich te verplaatsen op hun zijde van het speelveld.
+
+Tijdens het spel zullen er "power-ups" tevoorschijn komen. Deze power-ups bevinden zich op willekeurige plekken boven het veld. Als de speler een power-up kan raken door er een bal tegen te gooien zal de power-up voor een gelimiteerde tijd geactiveerd worden. Deze power-up zorgt er voor dat de ballen die speler kan gooien groter zijn dan normaal. Met deze power-up zal het dus makkelijker zijn om de ontwijkers te raken.
+
+Het spel duurt maximaal 120 seconden. Als de speler binnen deze tijd de drie ontwijkers krijgt uitgeschakelt is het spel gewonnen. Als de tijd op is voor alle ontwijkers zijn uitgeschakelt is het spel verloren en moet de speler opnieuw beginnen.
 
 ### Observaties, acties en beloningen
 
@@ -60,6 +66,68 @@ De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij o
 ![Speelveld](./Afbeeldingen/Speelveld.jpg)
 
 De spelomgeving is een zaal met tribunes en toeschouwers. De toeschouwers hebben geen invloed op het spel. Alleen de grond (rood), speelveld (groen) en de middenlijn die het speelveld verdeelt in twee delen (wit) zijn van belang voor de ontwijker. De zaal zijn vier Panes die een rode material bevatten. Er zijn ook acht capsules aanwezig die een spotlight hebben om de zaal te verlichten. Het speelveld bestaat uit twee aparte platte Cubes. De tribunes zijn opgebouwd uit verscheidene Cubes die op elkaar gestapeld zijn en de toeschouwers zijn groene Spheres met twee paar witte en zwarte Spheres die ogen vormen. Ook is er een onzichtbare Cube Box Collider die ervoor zorgt dat de power-ups binnen zijn grenzen kan spawnen. De deuren en tekst op de muur zijn optioneel.
+
+Het eerste wat men moet doen is het maken van een environment de script:
+
+1. Selecteer het speelveld in dit geval zal dit de Gym zijn.
+2. In de inspector klikt men op `Add Component`.
+3. In de components lijst klikt men op `New Script` (dit bevind zich onder aan)
+4. geef de script de naam "Environment"
+5. dan klikt men op `Create and Add`
+
+laten we nu de script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent de script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
+
+```cs (Environment.cs)
+    public const float MAXTIME = 120f;
+    public float ballAverageSpawnTimer = 2f;
+    public bool TrainingMode = true;
+    public bool ballHasBeenTakenNonTraining;
+    public bool powerUpBall = false;
+    public GameObject ballPrefab;
+    public GameObject dodgerPrefab;
+    public GameObject powerUpSpawnLocation;
+    public GameObject powerUpPrefab;
+    public List<GameObject> powerUpList;
+    public List<Dodger> dodgersList;
+
+    private const float POWERUP_SPAWNTIMER = 15f;
+    private float episodeTime = MAXTIME;
+    private float ballRespawnTime;
+    private float currentScore = 0f;
+    private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
+    private float largeScale = 2f;
+    private float largeTimer = 10f;
+    private bool throwing = true;
+    private bool spawnDodgers;
+    private bool spawningPowerups = true;
+    private System.Random random = new System.Random();
+    private GameObject ballSpawnpointNonTraining;
+    private GameObject balls; 
+    private GameObject dodgers;
+    private Vector3 standardPositionDL;
+    private Vector3 standardPositionDM;
+    private Vector3 standardPositionDR;
+    private TextMeshPro scoreboard;
+    private BoxCollider powerUpSpawnBox;
+```
+
+We beginnen met enkele publieke object-variabelen. De float `MAXTIME` toont aan hoelang elke episode zal duren. De `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een ball spawnt. Dan zijn er vier GameObjecten daar moet men de prefabs van de gameobjecten koppelen, dan heeft men ook nog twee lijsten `powerUpList` en `dodgersList`.
+
+De volgende variablen zijn de private objecten. Er zijn enkele float objecten:
+
+- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooralleer een power-up zal spawnen.
+- `episodeTime` toont hoelang elke episode zal duren.
+- `ballRespawnTime` geeft aan hoelang het duurt vooralleer een bal zal spawnen.
+- `currentScore` toont de score.
+- `currentUpgradeTimer` wordt telkens terug
+- `largeScale`
+- `largeTimer`
+
+Dan zijn er ook nog drie bools:
+
+- `throwing`
+- `spawnDodgers`
+- `spawningPowerups`
 
 #### Speler
 
