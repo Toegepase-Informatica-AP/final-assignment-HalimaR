@@ -7,6 +7,7 @@ using UnityEngine;
 public class Environment : MonoBehaviour
 {
     public const float MAXTIME = 120f;
+    public float largeTimer = 10f;
     public float ballAverageSpawnTimer = 2f;
     public bool TrainingMode = true;
     public bool ballHasBeenTakenNonTraining;
@@ -24,7 +25,6 @@ public class Environment : MonoBehaviour
     private float currentScore = 0f;
     private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
     private float largeScale = 2f;
-    private float largeTimer = 10f;
     private bool throwing = true;
     private bool spawnDodgers;
     private bool spawningPowerups = true;
