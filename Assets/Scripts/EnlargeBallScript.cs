@@ -25,6 +25,7 @@ public class EnlargeBallScript : MonoBehaviour
             MyEnvironment.powerUpList.Remove(gameObject);
             Destroy(gameObject);
             MyEnvironment.powerUpBall = true;
+            MyEnvironment.largeTimer = 10f;
         }
     }
 }

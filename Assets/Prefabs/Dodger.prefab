@@ -474,7 +474,7 @@ MonoBehaviour:
     VectorActionSpaceType: 0
   m_Model: {fileID: 5022602860645237092, guid: c1d25c21ca6aaaa43a62a3be877aab96, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
+  m_BehaviorType: 1
   m_BehaviorName: Dodger
   TeamId: 0
   m_UseChildSensors: 1
@@ -494,9 +494,8 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  MovingSpeed: 5
-  RotationSpeed: 5
-  Force: 5
+  movingSpeed: 5
+  force: 10
   isHit: 0
 --- !u!114 &8827857022452919949
 MonoBehaviour:
