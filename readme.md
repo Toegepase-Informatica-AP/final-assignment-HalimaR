@@ -1,6 +1,12 @@
 # VR Trefbal Handleiding
 
-Chauvaux Nico, Collette Cédric, Messiaen Ruben, Van Nueten Wouter en Rahimi Halima
+| Naam | Studentnummer |
+| ---- | ------------- |
+| Collette Cédric | s107601 |
+| Van Nueten Wouter | s107229 |
+| Rahimi Halima | s101035 |
+| Chauvaux Nico | |
+| Messiaen Ruben | |
 
 ## Inleiding
 
@@ -748,7 +754,7 @@ Er staat in de one-pager dat de AI's niet hetzelfde reward-systeem gaan hebben. 
 
 Om de Ontwijkers te trainen hebben we volgende training configuratie gebruikt.
 
-__Dodger.yaml__
+### Dodger.yaml
 
 ```yaml
 behaviors:
