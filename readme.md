@@ -113,21 +113,289 @@ laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op
 
 We beginnen met enkele publieke object-variabelen. De float `MAXTIME` toont aan hoelang elke episode zal duren. De `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een ball spawnt. Dan zijn er vier GameObjecten daar moet men de prefabs van de gameobjecten koppelen, dan heeft men ook nog twee lijsten `powerUpList` en `dodgersList`.
 
-De volgende variablen zijn de private objecten. Er zijn enkele float objecten:
+- `MAXTIME` toont aan hoelang elke episode zal duren.
+- `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een bal spawnt
+- `TrainingMode` is bedoelt voor het trainen van de ML-agent, wanneer dit op true staat zullen de ballen vanzelf geworpen worden.
+- `ballHasBeenTakenNonTraining` zal de speler zelf de bal kunnen oprapen en de mogelijkheid hebben om te hooien.
+- `powerUpBall` wordt nagekeken of de bal een power-up heeft geraakt.
+- `ballPrefab` komt de prefab object van de bal.
+- `dodgerPrefab` komt de prefab object van de dodger.
+- `powerUpSpawnLocation` is de locatie waar in de power-ups mogen spawnen.
+- `powerUpPrefab` komt de prefab object van de power-up.
+- `powerUpList` lijst waar de power-ups in toegevoegd worden.
+- `dodgersList` lijst waar de dodgers in toegevoegd worden.
 
-- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooraleer een power-up zal spawnen.
+De volgende variablen zijn de private objecten.
+
+- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooralleer een power-up zal spawnen.
 - `episodeTime` toont hoelang elke episode zal duren.
-- `ballRespawnTime` geeft aan hoelang het duurt vooraleer een bal zal spawnen.
+- `ballRespawnTime` geeft aan hoelang het duurt vooralleer een bal zal spawnen.
 - `currentScore` toont de score.
 - `currentUpgradeTimer` zorgt ervoor dat er een timer is tussen het werpen van de bal.
 - `largeScale` zorgt ervoor wanneer een bal tegen een power-up komt de bal groter word.
 - `largeTimer`zorgt ervoor dat de power-up een bepaalde tijd actief blijft.
-
-Dan zijn er ook nog drie bools:
-
 - `throwing` is vooral bedoelt voor het trainen van de ML-agent, die zorgt ervoor dat de `ballSpawner` wordt aangeroepen.
 - `spawnDodgers` spawnt de dodgers.
 - `spawningPowerups` spant de power-ups
+- `random` is een variabelen die gebruikt wordt om de random positie van een dodger op te halen.
+- `ballSpawnpointNonTraining` wordt de spawn point gekoppeld.
+- `balls` wordt de GameObject bal gekoppeld.
+- `dodgers` wordt de GameObject dodger gekoppeld.
+- `standardPositionDL`, `standardPositionDM`, `standardPositionDR` zijn de spawn posities van de dodegers.
+- `scoreboard` geeft de score weer.
+- `powerUpSpawnBox` zorgt ervoor dat de power-ups niet buiten het speelveld spawnen.
+
+### initializatie van Environment
+
+De start methode wordt als eerste en één keer opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Bij de Start methode gebeurt de initialisatie van enkele bovenstaande referenties. Wat wel belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` moet. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene.
+
+```cs (Environment.cs)
+void Start()
+    {
+        if (!TrainingMode)
+        {
+            ballHasBeenTakenNonTraining = true;
+            ballSpawnpointNonTraining = transform.Find("BallSpawnPoint").gameObject;
+        }
+        balls = transform.Find("Balls").gameObject;
+        dodgersList = new List<Dodger>();
+        ballRespawnTime = ballAverageSpawnTimer;
+        StartCoroutine(PowerUpSpawner());
+        StartCoroutine(BallSpawner());
+        standardPositionDL = new Vector3(10f, 3f, -20f);
+        standardPositionDM = new Vector3(0f, 3f, -20f);
+        standardPositionDR = new Vector3(-10f, 3f, -20f);
+        SpawnDodgersGameobject();
+        SpawnDodgers();
+        scoreboard = transform.GetComponentInChildren<TextMeshPro>();
+        powerUpSpawnBox = powerUpSpawnLocation.GetComponent<BoxCollider>();
+    }
+```
+
+De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing` op false staat en of de `spawningPowerups` of false staat samen met `powerUpList`.
+
+```cs (Environment.cs)
+void Update()
+    {
+        if (throwing == false)
+        {
+            StartCoroutine(BallSpawner());
+            throwing = true;
+        }
+        if (spawningPowerups == false && powerUpList.Count() < 3)
+        {
+            StartCoroutine(PowerUpSpawner());
+            spawningPowerups = true;
+        }
+        if (powerUpBall)
+        {
+            largeTimer -= Time.deltaTime;
+            if (largeTimer <= 0)
+            {
+                powerUpBall = false;
+            }
+        }
+        if (spawnDodgers)
+        {
+            SpawnDodgers();
+        }
+    }
+```
+
+In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gerest. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de list niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt wordt de scoreboard continu weergegeven dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt is wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd van de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
+
+```cs (Environment.cs)
+ void FixedUpdate()
+    {
+        currentScore = 0f;
+        if(episodeTime >= 0)
+        {
+            if (dodgersList.Count == 0)
+            {
+                ResetEnvironment();
+            }
+            else
+            {
+                for (int counter = dodgersList.Count - 1; counter >= 0; counter--)
+                {
+                    if (!dodgersList[counter].isHit)
+                    {
+                        currentScore += dodgersList[counter].GetCumulativeReward();
+                    }
+                    else if (dodgersList[counter].isHit)
+                    {
+                        dodgersList[counter].EndEpisode();
+                        Destroy(dodgersList[counter].gameObject);
+                        dodgersList.Remove(dodgersList[counter]);
+                    }
+                }
+                scoreboard.text = currentScore.ToString("f3") + "\n" + episodeTime.ToString("f0");
+            }
+            episodeTime = episodeTime - Time.deltaTime;
+        } else
+        {
+            EndAllEpisodes();
+            ResetEnvironment();
+        }
+    }
+```
+
+De `SpawnDodgersGameobject` methode spawnd de dodgers elke keer als een episode beëindigd is. De dodgers worden willekeurig in hun speelveld geplatst.
+
+```cs (Environment.cs)
+ private void SpawnDodgersGameobject()
+    {
+        dodgers = new GameObject();
+        dodgers.name = "Dodgers";
+        dodgers.transform.SetParent(this.transform);
+        dodgers.transform.position = this.transform.position;
+    }
+```
+
+In de `ResetEnvironment` methode word het voledige environment gerest. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers en de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
+
+```cs (Environment.cs)
+ public void ResetEnvironment()
+    {
+        foreach (GameObject powerUp in powerUpList)
+        {
+            Destroy(powerUp);
+        }
+        foreach (Transform ball in balls.transform)
+        {
+            Destroy(ball.gameObject);
+        }
+        Destroy(dodgers.gameObject);
+        SpawnDodgersGameobject();
+        StopAllCoroutines();
+        episodeTime = MAXTIME;
+        currentUpgradeTimer = POWERUP_SPAWNTIMER;
+        spawnDodgers = true;
+        throwing = false;
+        spawningPowerups = false;
+        ballHasBeenTakenNonTraining = true;
+    }
+```
+
+De `SpawnDodgers` methode zorgt ervoor dat de dodgers terug respawen wanneer de `dodgersList` leeg is en of wanneer de episode eindigt. De drie dodgers worden één per één aangemaakt en aan de list `dodgersList` toegevoegd.
+
+```cs (Environment.cs)
+public void SpawnDodgers() 
+    {
+        GameObject dodgerLeft = Instantiate(dodgerPrefab, transform);
+        dodgerLeft.transform.SetParent(dodgers.transform);
+        dodgerLeft.transform.localPosition = standardPositionDL;
+        dodgerLeft.name = "dodgerLeft";
+        Debug.Log("Spawn dodger middle");
+        GameObject dodgerMiddle = Instantiate(dodgerPrefab, transform);
+        dodgerMiddle.transform.SetParent(dodgers.transform);
+        dodgerMiddle.transform.localPosition = standardPositionDM;
+        dodgerMiddle.name = "dodgerMiddle";
+        Debug.Log("Spawn dodger right");
+        GameObject dodgerRight = Instantiate(dodgerPrefab, transform);
+        dodgerRight.transform.SetParent(dodgers.transform);
+        dodgerRight.transform.localPosition = standardPositionDR;
+        dodgerRight.name = "dodgerRight";
+        dodgersList = transform.GetComponentsInChildren<Dodger>(dodgers).ToList();
+        spawnDodgers = false;
+    }
+```
+
+Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de time van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen.
+
+```cs (Environment.cs)
+ IEnumerator BallSpawner()
+    {
+        while (TrainingMode)
+        {
+            yield return new WaitForSeconds(ballRespawnTime);
+            ballRespawnTime = Random.Range(ballAverageSpawnTimer * 0.5f, ballAverageSpawnTimer * 1.5f);
+            GameObject ball = Instantiate(ballPrefab);
+            if (powerUpBall == true){
+                ball.transform.localScale = new Vector3(largeScale, largeScale, largeScale);
+            }
+            ball.transform.SetParent(balls.transform);
+            float ballX = Random.Range(transform.position.x -1f, transform.position.x + 1f);
+            float ballY = Random.Range(transform.position.y + 0.5f,transform.position.y + 3f);
+            float ballZ = transform.position.z + 18f;
+            Vector3 ballPositie = new Vector3(ballX, ballY, ballZ);
+            ball.transform.position = ballPositie;
+            Rigidbody ballRigidbody = ball.GetComponent<Rigidbody>();
+            int randomDodgerNumber = random.Next(0, dodgersList.Count());
+            GameObject randomDodger = dodgersList[randomDodgerNumber].gameObject;
+            Vector3 randomDodgerPosition = (randomDodger.transform.position - ball.transform.position).normalized;
+            Vector3 throwVector = new Vector3(randomDodgerPosition.x, randomDodgerPosition.y + 0.1f, randomDodgerPosition.z);
+            ballRigidbody.velocity = throwVector * 60f;
+        }
+        while (!TrainingMode)
+        {
+            if (ballHasBeenTakenNonTraining)
+            { 
+                SpawnBall();
+            }
+            yield return new WaitForSeconds(3f);
+        }
+        throwing = false;
+    }
+```
+
+De `SpawnBall` methode spawnd de ballen elke keer als een episode beëindigd is.
+
+```cs (Environment.cs)
+private void SpawnBall()
+    {
+        GameObject ball = Instantiate(ballPrefab);
+        ball.transform.SetParent(balls.transform);
+        ball.transform.position = ballSpawnpointNonTraining.transform.localPosition;
+        ballHasBeenTakenNonTraining = false;
+    }
+```
+
+Voor de `PowerUpSpawner` methode is ook gebruik gemaakt van `StartCoroutine`. Deze keer is het voor het respawnen van de power-ups. De power-ups worden in de list `powerUpList` toegevoegd.
+
+```cs (Environment.cs)
+IEnumerator PowerUpSpawner()
+    {
+        while (powerUpList.Count() < 3)
+        {
+            yield return new WaitForSeconds(currentUpgradeTimer);
+            GameObject largePowerUp = Instantiate(powerUpPrefab);
+            largePowerUp.GetComponent<EnlargeBallScript>().MyEnvironment = this;
+            powerUpList.Add(largePowerUp);
+            largePowerUp.transform.SetParent(GameObject.FindGameObjectWithTag("PowerUpList").transform);
+            float powerUpX = Random.Range(powerUpSpawnBox.bounds.min.x, powerUpSpawnBox.bounds.max.x);
+            float powerUpY = Random.Range(0.3f, powerUpSpawnBox.bounds.max.y);
+            float powerUpZ = Random.Range(powerUpSpawnBox.bounds.min.z, powerUpSpawnBox.bounds.max.z);
+            largePowerUp.transform.position = new Vector3(powerUpX, powerUpY, powerUpZ);        
+        }
+        spawningPowerups = false;
+    }
+```
+
+Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de list `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
+
+```cs (Environment.cs)
+ private void EndAllEpisodes()
+    {
+        if(dodgersList.Count > 0)
+        {
+            for (int counter = dodgersList.Count - 1; counter >= 0; counter--)
+            {
+                dodgersList[counter].EndEpisode();
+                if(dodgersList[counter] != null && dodgersList[counter].gameObject != null)
+                {
+                    Destroy(dodgersList[counter].gameObject);
+                }
+                dodgersList.RemoveAt(counter);
+            }
+        }
+    }
+```
+
+
+### initializatie van Environment
+
+De start methode wordt als eerste en één keer opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Bij de Start methode gebeurt de initialisatie van enkele bovenstaande referenties. Wat wel belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` moet. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene.
 
 #### Speler
 
