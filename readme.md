@@ -396,11 +396,6 @@ Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. 
     }
 ```
 
-
-### initializatie van Environment
-
-De start methode wordt als eerste en één keer opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Bij de Start methode gebeurt de initialisatie van enkele bovenstaande referenties. Wat wel belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` moet. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene.
-
 #### Speler
 
 ![Speler](./Afbeeldingen/Speler.jpg)
