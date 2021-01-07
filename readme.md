@@ -8,7 +8,12 @@
 | Chauvaux Nico | |
 | Messiaen Ruben | |
 
-1. [Introduction](##Inleiding)
+# Inhoudstafel
+
+1. [Inleiding](##Inleiding)
+2. [Samenvatting](##Samenvatting)
+3. [Methoden](##Methoden)
+
 
 ## Inleiding
 
