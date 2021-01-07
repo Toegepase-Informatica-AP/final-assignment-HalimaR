@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Unity.MLAgents;
 using UnityEngine;
 
@@ -22,12 +21,11 @@ public class Dodger : Agent
         base.Initialize();
         body = GetComponent<Rigidbody>();
         body.centerOfMass = Vector3.zero;
-        body.inertiaTensorRotation = Quaternion.identity; //Disable rotation in every possible way! https://answers.unity.com/questions/1484746/rigibody-constraints-do-not-work-still-moves-a-lit.html
+        body.inertiaTensorRotation = Quaternion.identity;
         StartCoroutine(DelayMethode());
         canJump = true;
         isOnField = true;
     }
-
     public override void OnActionReceived(float[] vectorAction)
     {
         //Forward backward
@@ -36,21 +34,12 @@ public class Dodger : Agent
             Vector3 translation = transform.forward * MovingSpeed * (vectorAction[0] * 2 - 3) * Time.deltaTime;
             transform.Translate(translation, Space.World);
         }
-
-        //Move sideward
+        //Move sidewards
         if (vectorAction[1] != 0)
         {
             Vector3 translation = transform.right * MovingSpeed * (vectorAction[1] * 2 - 3) * Time.deltaTime;
             transform.Translate(translation, Space.World);
         }
-        /*
-        //Rotation
-        if (vectorAction[2] != 0)
-        {
-            float rotation = RotationSpeed * (vectorAction[2] * 2 - 3) * Time.deltaTime;
-            transform.Rotate(0, rotation, 0);
-        }
-        */
         //Jump
         if (vectorAction[2] != 0)
         {
@@ -59,18 +48,10 @@ public class Dodger : Agent
     }
     public override void Heuristic(float[] actionsOut)
     {
-        /*
-        if(transform.name != environment.selectedDodger)
-        {
-            return;
-        }
-        */
-
         //Defined actions
         actionsOut[0] = 0f;
         actionsOut[1] = 0f;
         actionsOut[2] = 0f;
-        //actionsOut[3] = 0f;
 
         if (Input.GetKey(KeyCode.Z)) // Moving fwd
         {
@@ -88,22 +69,11 @@ public class Dodger : Agent
         {
             actionsOut[1] = 2f;
         }
-        /*
-        else if (Input.GetKey(KeyCode.A)) // Rotate left
-        {
-            actionsOut[2] = 1f;
-        }
-        else if (Input.GetKey(KeyCode.E)) // Rotate right
-        {
-            actionsOut[2] = 2f;
-        }
-        */
         else if (Input.GetKey(KeyCode.Space)) // Jump
         {
             actionsOut[2] = 1f;
         }
     }
-
     private void Jump()
     {
         //Make character jump if jump is ready
@@ -131,7 +101,6 @@ public class Dodger : Agent
             isHit = true;
         }
     }
-
     //Detect if a second passed
     IEnumerator DelayMethode()
     {
@@ -141,7 +110,6 @@ public class Dodger : Agent
             timePast = true;
         }
     }
-
     private void FixedUpdate()
     {
         //Add reward if dodger is on playing field
