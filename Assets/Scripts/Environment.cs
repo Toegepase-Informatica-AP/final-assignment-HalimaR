@@ -45,7 +45,7 @@ public class Environment : MonoBehaviour
     public List<GameObject> powerUpList;
     private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
     public bool powerUpBall = false;
-    private float largeScale = 2f;
+    private float largeScale = 3.5f;
     private float largeTimer = 10f;
 
     // Start is called before the first frame update
@@ -247,6 +247,12 @@ public class Environment : MonoBehaviour
     private void SpawnBall()
     {
         GameObject ball = Instantiate(ballPrefab);
+
+        if (powerUpBall == true)
+        {
+            ball.transform.localScale = new Vector3(largeScale, largeScale, largeScale);
+        }
+
         ball.transform.SetParent(balls.transform);
         ball.transform.position = ballSpawnpointNonTraining.transform.localPosition;
         ballHasBeenTakenNonTraining = false;
