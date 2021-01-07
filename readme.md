@@ -1,6 +1,12 @@
 # VR Trefbal Handleiding
 
-Chauvaux Nico, Collette Cédric, Messiaen Ruben, Van Nueten Wouter en Rahimi Halima
+| Naam | Studentnummer |
+| ---- | ------------- |
+| Collette Cédric | s107601 |
+| Van Nueten Wouter | s107229 |
+| Rahimi Halima | s101035 |
+| Chauvaux Nico | |
+| Messiaen Ruben | |
 
 ## Inleiding
 
@@ -75,7 +81,7 @@ Het eerste wat men moet doen is het maken van een environment script:
 4. geef de script de naam "Environment"
 5. dan klikt men op `Create and Add`
 
-laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
+laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen.
 
 ```cs (Environment.cs)
     public const float MAXTIME = 120f;
@@ -111,7 +117,7 @@ laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op
     private BoxCollider powerUpSpawnBox;
 ```
 
-We beginnen met enkele publieke object-variabelen. De float `MAXTIME` toont aan hoelang elke episode zal duren. De `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een ball spawnt. Dan zijn er vier GameObjecten daar moet men de prefabs van de gameobjecten koppelen, dan heeft men ook nog twee lijsten `powerUpList` en `dodgersList`.
+We beginnen met enkele publieke object-variabelen.
 
 - `MAXTIME` toont aan hoelang elke episode zal duren.
 - `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een bal spawnt
@@ -147,7 +153,7 @@ De volgende variablen zijn de private objecten.
 
 ### initializatie van Environment
 
-De start methode wordt als eerste en één keer opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Bij de Start methode gebeurt de initialisatie van enkele bovenstaande referenties. Wat wel belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` moet. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene.
+In De Start methode gebeurt de initialisatie van enkele bovenstaande referenties en wordt als eerste opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Wat belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` staat. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene om het dan te laten trainen.
 
 ```cs (Environment.cs)
 void Start()
@@ -172,7 +178,7 @@ void Start()
     }
 ```
 
-De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing` op false staat en of de `spawningPowerups` of false staat samen met `powerUpList`.
+De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing`, `spawningPowerups` en `powerUpList` op false staan.
 
 ```cs (Environment.cs)
 void Update()
@@ -202,7 +208,7 @@ void Update()
     }
 ```
 
-In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gerest. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de list niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt wordt de scoreboard continu weergegeven dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt is wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd van de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
+In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geupdate dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
 
 ```cs (Environment.cs)
  void FixedUpdate()
@@ -252,7 +258,7 @@ De `SpawnDodgersGameobject` methode spawnd de dodgers elke keer als een episode 
     }
 ```
 
-In de `ResetEnvironment` methode word het voledige environment gerest. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers en de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
+In de `ResetEnvironment` methode word het voledige environment gereset. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers, de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
 
 ```cs (Environment.cs)
  public void ResetEnvironment()
@@ -299,7 +305,7 @@ public void SpawnDodgers()
     }
 ```
 
-Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de time van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen.
+Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de tijd van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen aan de bal.
 
 ```cs (Environment.cs)
  IEnumerator BallSpawner()
@@ -370,7 +376,7 @@ IEnumerator PowerUpSpawner()
     }
 ```
 
-Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de list `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
+Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de lijst `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
 
 ```cs (Environment.cs)
  private void EndAllEpisodes()
@@ -389,11 +395,6 @@ Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. 
         }
     }
 ```
-
-
-### initializatie van Environment
-
-De start methode wordt als eerste en één keer opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Bij de Start methode gebeurt de initialisatie van enkele bovenstaande referenties. Wat wel belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` moet. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene.
 
 #### Speler
 
@@ -744,6 +745,63 @@ Dit is de one-pager dat werd opgemaakt voor de aanvang van het project.
 
 Er staat in de one-pager dat de AI's niet hetzelfde reward-systeem gaan hebben. Dit is niet meer het geval, de drie AI's delen hetzelfde reward-systeem, zodat ze elkaar niet zouden tegenwerken.
 
+## Training Methode
+
+Om de Ontwijkers te trainen hebben we volgende training configuratie gebruikt.
+
+### Dodger.yaml
+
+```yaml
+behaviors:
+  Dodger:
+    trainer_type: ppo
+    max_steps: 5.0e8
+    time_horizon: 64
+    summary_freq: 10000
+    keep_checkpoints: 5
+    checkpoint_interval: 50000
+    
+    hyperparameters:
+      batch_size: 32
+      buffer_size: 9600
+      learning_rate: 3.0e-4
+      learning_rate_schedule: constant
+      beta: 5.0e-3
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+
+    network_settings:
+      num_layers: 2
+      hidden_units: 128
+      normalize: false
+      vis_encoder_type: simple
+
+    reward_signals:
+      extrinsic:
+        strength: 1.0
+        gamma: 0.99
+      curiosity:
+        strength: 0.02
+        gamma: 0.99
+        encoding_size: 256
+        learning_rate : 1e-3
+```
+
+De volgende commando's zijn nodig om de training uit te voeren:
+
+Om de training te starten:
+
+```c
+mlagents-learn Dodger.yaml --run-id [Naam van deze training]
+```
+
+Om de resultaten in grafieken te zien:
+
+```c
+tensorboard --logdir results
+```
+
 ## Resultaten
 
 Tijdens het trainen van de Agent hebben zijn er trainingen uitgevoerd met verschillende aanpassingen. Het doel is om de agents efficïent en correct te trainen zodat de agents correct werken in het spel.
@@ -832,3 +890,5 @@ De oorzaak van de negatieve resultaten is dat de logica om de ballen te werpen t
 
 Tijdens dit project hebben we dus een VR Trefbal game waarbij de speler ballen moet gooien naar Ontwijkers die getraint zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
 In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken.
+
+## Bronnen
