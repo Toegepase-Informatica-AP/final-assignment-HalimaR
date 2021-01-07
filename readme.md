@@ -162,13 +162,31 @@ Dit zijn alle properties die in deze klasse worden gedefinieerd
 
 Zoals aangegeven door de comment hebben de eerste drie properties te maken met de beweging van de ontwijker.
 
-- `MovingSpeed` Bepaalt de snelheid waarin de ontwijker kan lopen
+- `MovingSpeed`: Bepaalt de snelheid waarin de ontwijker kan lopen
 
 #### Bal
 
 ![Bal](./Afbeeldingen/Bal.jpg)
 
 De bal is het voorwerp dat de speler kan gooien om de ontwijkers en de power-ups te kunnen raken. De bal is een normale oranje/gele Sphere. Deze bevat ook een geluidsbestand die afspeelt van zodra de bal iets raakt.
+
+Het volgende script dat moet aangemaakt worden is het Ballhit script. Dit is het dat ervoor zorgt dat de bal zijn eigenschappen veranderen en het geluid afspeelt als de bal iets raakt.
+
+```cs (Ballhitscript.cs)
+    private bool startCount = false;
+    private bool hasMoved = false;
+    private float counter = 5f;
+    private Rigidbody body;
+    private Vector3 initialPostion;
+    private Environment environment;
+```
+
+- `Startcount`: Als deze op "True" staat, begint de timer te lopen om de ball te despawnen.
+- `HasMoved`: Als deze op true staat, gaat de gravity op aan, waardoor de bal valt als deze gegooid wordt.
+- `Bounter`: De timer die bepaalt na hoeveel tijd de bal despawned.
+- `Body`: De body van de bal die andere objecten kan raken
+- `InitialPosition`: De positie waarin de bal begint op het veld.
+- `Environment`: De environment waarin de bal moet spawnen.
 
 #### Power-up
 
