@@ -75,7 +75,7 @@ Het eerste wat men moet doen is het maken van een environment script:
 4. geef de script de naam "Environment"
 5. dan klikt men op `Create and Add`
 
-laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
+laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen.
 
 ```cs (Environment.cs)
     public const float MAXTIME = 120f;
