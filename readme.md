@@ -67,15 +67,15 @@ De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij o
 
 De spelomgeving is een zaal met tribunes en toeschouwers. De toeschouwers hebben geen invloed op het spel. Alleen de grond (rood), speelveld (groen) en de middenlijn die het speelveld verdeelt in twee delen (wit) zijn van belang voor de ontwijker. De zaal zijn vier Panes die een rode material bevatten. Er zijn ook acht capsules aanwezig die een spotlight hebben om de zaal te verlichten. Het speelveld bestaat uit twee aparte platte Cubes. De tribunes zijn opgebouwd uit verscheidene Cubes die op elkaar gestapeld zijn en de toeschouwers zijn groene Spheres met twee paar witte en zwarte Spheres die ogen vormen. Ook is er een onzichtbare Cube Box Collider die ervoor zorgt dat de power-ups binnen zijn grenzen kan spawnen. De deuren en tekst op de muur zijn optioneel.
 
-Het eerste wat men moet doen is het maken van een environment de script:
+Het eerste wat men moet doen is het maken van een environment script:
 
 1. Selecteer het speelveld in dit geval zal dit de Gym zijn.
 2. In de inspector klikt men op `Add Component`.
-3. In de components lijst klikt men op `New Script` (dit bevind zich onder aan)
+3. In de components lijst klikt men op `New Script` (dit bevindt zich onder aan)
 4. geef de script de naam "Environment"
 5. dan klikt men op `Create and Add`
 
-laten we nu de script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent de script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
+laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen. We zullen enkele object-variabelen overlopen de anderen zullen uitgelegd worden verder in de tutorial.
 
 ```cs (Environment.cs)
     public const float MAXTIME = 120f;
@@ -115,19 +115,19 @@ We beginnen met enkele publieke object-variabelen. De float `MAXTIME` toont aan 
 
 De volgende variablen zijn de private objecten. Er zijn enkele float objecten:
 
-- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooralleer een power-up zal spawnen.
+- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooraleer een power-up zal spawnen.
 - `episodeTime` toont hoelang elke episode zal duren.
-- `ballRespawnTime` geeft aan hoelang het duurt vooralleer een bal zal spawnen.
+- `ballRespawnTime` geeft aan hoelang het duurt vooraleer een bal zal spawnen.
 - `currentScore` toont de score.
-- `currentUpgradeTimer` wordt telkens terug
-- `largeScale`
-- `largeTimer`
+- `currentUpgradeTimer` zorgt ervoor dat er een timer is tussen het werpen van de bal.
+- `largeScale` zorgt ervoor wanneer een bal tegen een power-up komt de bal groter word.
+- `largeTimer`zorgt ervoor dat de power-up een bepaalde tijd actief blijft.
 
 Dan zijn er ook nog drie bools:
 
-- `throwing`
-- `spawnDodgers`
-- `spawningPowerups`
+- `throwing` is vooral bedoelt voor het trainen van de ML-agent, die zorgt ervoor dat de `ballSpawner` wordt aangeroepen.
+- `spawnDodgers` spawnt de dodgers.
+- `spawningPowerups` spant de power-ups
 
 #### Speler
 
@@ -141,6 +141,28 @@ Het speler-gameobject heeft op zich niet veel nut, maar wordt gebruikt bij de tr
 
 De ontwijker is het object waarop de AI zal worden toegepast. Deze zal aan de hand van de beschikbare acties, beloningen en observaties zo lang mogelijk proberen te overleven en de ballen te ontwijken.
 Deze bestaat uit een Capsule als lichaam met één grote witte Sphere als oog en verschillende kleinere zwarte Spheres als de iris van het oog. De zwarte irissen bevatten RayPerceptions die de andere gameobjecten kan waarnemen. Ook is er een plattere zwarte Sphere die dient als wenkbrauw.
+
+Het volgende script dat moet aangemaakt worden is het Dodger script. Dit is het script dat de ontwijker en dus ook AI zal aansturen.
+
+Dit zijn alle properties die in deze klasse worden gedefinieerd
+
+```cs (Dodger.cs)
+    //Movement speed and Rotation
+    public float MovingSpeed = 5.0f;
+    public float RotationSpeed = 5.0f;
+    public float Force = 10.0f;
+
+    //Properties
+    private Rigidbody body;
+    private bool canJump;
+    public bool isHit;
+    private bool timePast;
+    private bool isOnField;
+```
+
+Zoals aangegeven door de comment hebben de eerste drie properties te maken met de beweging van de ontwijker.
+
+- `MovingSpeed` Bepaalt de snelheid waarin de ontwijker kan lopen
 
 #### Bal
 
