@@ -8,6 +8,8 @@
 | Chauvaux Nico | |
 | Messiaen Ruben | |
 
+1. [Introduction](##Inleiding)
+
 ## Inleiding
 
 Voor het vak VR Experience hebben wij als project gekozen om een VR Trefbal spel te maken. Bij dit spel is het de bedoeling dat de speler drie ontwijkers probeert te raken met een bal. Deze ontwijkers zijn AI's die we getraind hebben voor dit project.
