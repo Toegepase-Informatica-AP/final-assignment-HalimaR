@@ -478,6 +478,46 @@ Dit is de one-pager dat werd opgemaakt voor de aanvang van het project.
 
 Er staat in de one-pager dat de AI's niet hetzelfde reward-systeem gaan hebben. Dit is niet meer het geval, de drie AI's delen hetzelfde reward-systeem, zodat ze elkaar niet zouden tegenwerken.
 
+
+## VR instellingen
+
+### Unity instellingen
+
+Om een VR applicatie te creëren voor de Oculus Quest 2 dient er een .apk file gebuild te worden. Maar eerst moet de package: "XR Interaction Toolkit" geïnstalleerd worden via de package manager. De build settings dienen vervolgens veranderd te worden. "File  > Build Settings > Android > Switch Platform".
+
+![One-pager](./Afbeeldingen/Build_Settings.png)
+
+Vervolgens dienen de player settings voor Oculus nog geconfigureerd te worden. "Player Settings > XR Plug-in Management > Android Settings" en vink "Oculus"aan.
+
+Nu de instelling klaar zijn, wordt er een XR rig voor de speler toegevoegd. Deze wordt op de locatie gezet waar de speler staat. Voor VR Dodgeball mag dit een "stationary XR Rig" zijn.
+
+![One-pager](./Afbeeldingen/add_XR_Rig.png)
+
+Wanneer het Unity project klaar is om in de Quest geladen te worden kan het .apk file gebuild worden. "File > Build Settings > Android > Build".
+
+### Quest instellingen
+
+Voor het mogelijk is om .apk applicaties te installeren op de Quest 2, moet developer modus worden ingeschakelt voor de de headset. "Smartphone Oculus Applicatie > Settings > OculusQuest 2 [*Model Number*] > More Settings > Developer Mode". Verbindt vervolgens de headset met USB aan een Computer en bevestig de pop-up in de headset.
+
+![One-pager](./Afbeeldingen/data_access.jpeg)
+![One-pager](./Afbeeldingen/OculusLinkCable-Anker.png)
+
+### SideQuest instellingen
+
+Om .apk files op de Quest te laden is een externe applicatie nodig: "SideQuest". In de applicatie is er een zichtbaar signaal dat aangeeft wanneer de Quest correct is verbonden.
+
+![One-pager](./Afbeeldingen/connected_quest.png)
+
+Laad vervolgens het .apk file in door op het symbool rechts bovenaan te klikken.
+
+![One-pager](./Afbeeldingen/inladen_quest.png)
+
+Vervolgens is er nog een bevestiging te zien als het .apk file correct op de quest is geladen.
+
+### Applicatie starten
+
+Ga naar: "Apps > Unknown sources" om de geïnstalleerde game terug te vinden.
+
 ## Resultaten
 
 ## Conclusie
@@ -489,3 +529,7 @@ Tijdens dit project hebben we dus een VR Trefbal game gemaakt met behulp van AI 
 *Persoonlijke visie op de resultaten, betekenis van de resultaten*
 
 *Verbeteringen naar de toekomst toe*
+
+## Bronvermelding
+
+- **Oculus Link Cable** - https://uploadvr.com/oculus-link-recommended-usb-cable/
