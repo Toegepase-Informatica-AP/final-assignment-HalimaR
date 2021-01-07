@@ -433,6 +433,8 @@ Dit zijn alle properties die in deze klasse worden gedefinieerd
 - `timePast` wordt gebruikt om te bepalen wanneer een dodger reward krijgt en/of van afgenomen wordt.
 - `isOnField` geeft aan of de ontwijker in het veld is of niet.
 
+De Initialize methode wordt standaard aangeroepen als de ontwijker wordt gespawned of met andere woorden dus geinitialiseerd.
+
 ```cs (Dodger.cs)
 public override void Initialize()
     {
@@ -446,8 +448,6 @@ public override void Initialize()
     }
 ```
 
-De Initialize methode wordt standaard aangeroepen als de ontwijker wordt gespawned of met andere woorden dus geinitialiseerd.
-
 De klasse erft over van de Agent klasse
 
 ```cs (Dodger.cs)
@@ -456,6 +456,8 @@ public class Dodger : Agent
 
 De Agent klasse (base van deze klasse) moet ook geinitialiseerd worden. Daarom is de eerste lijn `base.Initialize()`.
 Verder wordt hier de body aangevuld, de coroutine gestart die later wordt toe gelicht en de booleans op de juiste waarden gezet.
+
+De OnActionReceived methode is verantwoordelijk voor bepaalde acties uit te voeren bij bepaalde inputs. Dit wordt door MLAgents gebruikt en de AI kan deze acties aanspreken. Dankzij deze acties kunnen de ontwijkers dus bewegen.
 
 ```cs (Dodger.cs)
 public override void OnActionReceived(float[] vectorAction)
@@ -480,7 +482,7 @@ public override void OnActionReceived(float[] vectorAction)
     }
 ```
 
-Deze methode is verantwoordelijk voor bepaalde acties uit te voeren bij bepaalde inputs. Dit wordt door MLAgents gebruikt en de AI kan deze acties aanspreken. Dankzij deze acties kunnen de ontwijkers dus bewegen.
+De Heuristic methode geeft de mogelijkheid om de ontwijkers te besturen met zelf bepaalde inputs van het toetsenbord. Wanneer er een input wordt gedetecteerd zullen de acties van de OnActionReceived methode worden uitgevoerd.
 
 ```cs (Dodger.cs)
 public override void Heuristic(float[] actionsOut)
@@ -513,7 +515,7 @@ public override void Heuristic(float[] actionsOut)
     }
 ```
 
-De Heuristic methode geeft de mogelijkheid om de ontwijkers te besturen met zelf bepaalde inputs van het toetsenbord. Wanneer er een input wordt gedetecteerd zullen de acties van de OnActionReceived methode worden uitgevoerd.
+De spring actie is in een aparte methode zodat die makkelijk van meerdere plekken kan worden aangeroepen
 
 ```cs (Dodger.cs)
 private void Jump()
@@ -527,7 +529,7 @@ private void Jump()
     }
 ```
 
-De spring actie is in een aparte methode zodat die makkelijk van meerdere plekken kan worden aangeroepen
+Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen. Elk object heeft een tag ingesteld en wanneer de ontwijker iets aanraakt zal er hier worden gecontroleert wat er juist is geraakt en zal er dan correct op gereageerd worden.
 
 ```cs (Dodger.cs)
 public void OnCollisionEnter(Collision collision)
@@ -550,7 +552,7 @@ public void OnCollisionEnter(Collision collision)
     }
 ```
 
-Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen. Elk object heeft een tag ingesteld en wanneer de ontwijker iets aanraakt zal er hier worden gecontroleert wat er juist is geraakt en zal er dan correct op gereageerd worden.
+Deze coroutine bepaalt om de hoeveel seconden een reward zal worden gegeven of afgenomen aan de Agent. Hier gaat er on de seconde een boolean op true worden gezet. Deze boolean wordt dan in een andere methode gebruikt om te bepalen of er een reward mag worden gegeven of afgenomen
 
 ```cs (Dodger.cs)
  IEnumerator DelayMethode()
@@ -563,7 +565,7 @@ Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen.
     }
 ```
 
-Deze coroutine bepaalt om de hoeveel seconden een reward zal worden gegeven of afgenomen aan de Agent. Hier gaat er on de seconde een boolean op true worden gezet. Deze boolean wordt dan in een andere methode gebruikt om te bepalen of er een reward mag worden gegeven of afgenomen
+De FixedUpdate methode wordt elke seconden aangeroepen. Deze methode bepaalt voor een groot deel welke rewards er toegevoegd mogen worden zolang er genoeg tijd is gepasseerd (besproken in vorige methode).
 
 ```cs (Dodger.cs)
 private void FixedUpdate()
@@ -587,8 +589,6 @@ private void FixedUpdate()
         }
     }
 ```
-
-De FixedUpdate methode wordt elke seconden aangeroepen. Deze methode bepaalt voor een groot deel welke rewards er toegevoegd mogen worden zolang er genoeg tijd is gepasseerd (besproken in vorige methode).
 
 #### Bal
 
