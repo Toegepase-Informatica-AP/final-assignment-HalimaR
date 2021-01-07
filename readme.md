@@ -149,7 +149,6 @@ Dit zijn alle properties die in deze klasse worden gedefinieerd
 ```cs (Dodger.cs)
     //Movement speed and Rotation
     public float MovingSpeed = 5.0f;
-    public float RotationSpeed = 5.0f;
     public float Force = 10.0f;
 
     //Properties
@@ -160,9 +159,170 @@ Dit zijn alle properties die in deze klasse worden gedefinieerd
     private bool isOnField;
 ```
 
-Zoals aangegeven door de comment hebben de eerste drie properties te maken met de beweging van de ontwijker.
+- `MovingSpeed` Bepaalt de snelheid waarin de ontwijker kan lopen.
+- `Force` De kracht waarmee de ontwijker kan springen.
+- `body` Is van type Rigidbody en wordt bijgehouden zodat er krachten gelijk springen kunnen worden uitgeoefend op het fysieke object in de wereld.
+- `canJump` is een vanzelfsprekende boolean.
+- `isHit` Een boolean die true is als de dodger geraakt is. Deze property wordt voor de rest niet binnen het dodger script zelf gebruikt maar is wel belanngrijk voor andere scripts. Daarom dat het een public property is.
+- `timePast` wordt gebruikt om te bepalen wanneer een dodger reward krijgt en/of van afgenomen wordt.
+- `isOnField` geeft aan of de ontwijker in het veld is of niet.
 
-- `MovingSpeed` Bepaalt de snelheid waarin de ontwijker kan lopen
+```cs (Dodger.cs)
+public override void Initialize()
+    {
+        base.Initialize();
+        body = GetComponent<Rigidbody>();
+        body.centerOfMass = Vector3.zero;
+        body.inertiaTensorRotation = Quaternion.identity;
+        StartCoroutine(DelayMethode());
+        canJump = true;
+        isOnField = true;
+    }
+```
+
+De Initialize methode wordt standaard aangeroepen als de ontwijker wordt gespawned of met andere woorden dus geinitialiseerd.
+
+De klasse erft over van de Agent klasse
+
+```cs (Dodger.cs)
+public class Dodger : Agent
+```
+
+De Agent klasse (base van deze klasse) moet ook geinitialiseerd worden. Daarom is de eerste lijn `base.Initialize()`.
+Verder wordt hier de body aangevuld, de coroutine gestart die later wordt toe gelicht en de booleans op de juiste waarden gezet.
+
+```cs (Dodger.cs)
+public override void OnActionReceived(float[] vectorAction)
+    {
+        //Forward backward
+        if (vectorAction[0] != 0)
+        {
+            Vector3 translation = transform.forward * movingSpeed * (vectorAction[0] * 2 - 3) * Time.deltaTime;
+            transform.Translate(translation, Space.World);
+        }
+        //Move sidewards
+        if (vectorAction[1] != 0)
+        {
+            Vector3 translation = transform.right * movingSpeed * (vectorAction[1] * 2 - 3) * Time.deltaTime;
+            transform.Translate(translation, Space.World);
+        }
+        //Jump
+        if (vectorAction[2] != 0)
+        {
+            Jump();
+        }
+    }
+```
+
+Deze methode is verantwoordelijk voor bepaalde acties uit te voeren bij bepaalde inputs. Dit wordt door MLAgents gebruikt en de AI kan deze acties aanspreken. Dankzij deze acties kunnen de ontwijkers dus bewegen.
+
+```cs (Dodger.cs)
+public override void Heuristic(float[] actionsOut)
+    {
+        //Defined actions
+        actionsOut[0] = 0f;
+        actionsOut[1] = 0f;
+        actionsOut[2] = 0f;
+
+        if (Input.GetKey(KeyCode.Z)) // Move forward
+        {
+            actionsOut[0] = 2f;
+        }
+        else if (Input.GetKey(KeyCode.S)) // Move Backwards
+        {
+            actionsOut[0] = 1f;
+        }
+        else if (Input.GetKey(KeyCode.Q)) // Move left
+        {
+            actionsOut[1] = 1f;
+        }
+        else if (Input.GetKey(KeyCode.D)) // Move Right
+        {
+            actionsOut[1] = 2f;
+        }
+        else if (Input.GetKey(KeyCode.Space)) // Jump
+        {
+            actionsOut[2] = 1f;
+        }
+    }
+```
+
+De Heuristic methode geeft de mogelijkheid om de ontwijkers te besturen met zelf bepaalde inputs van het toetsenbord. Wanneer er een input wordt gedetecteerd zullen de acties van de OnActionReceived methode worden uitgevoerd.
+
+```cs (Dodger.cs)
+private void Jump()
+    {
+        //Make character jump if jump is ready
+        if (canJump)
+        {
+            canJump = false;
+            body.AddForce(Vector3.up * force, ForceMode.Impulse);
+        }
+    }
+```
+
+De spring actie is in een aparte methode zodat die makkelijk van meerdere plekken kan worden aangeroepen
+
+```cs (Dodger.cs)
+public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.tag == "PlayingGround")
+        {
+            isOnField = true;
+            canJump = true;
+        }
+        if(collision.collider.tag == "Ground")
+        {
+            isOnField = false;
+            canJump = true;
+        }
+        if(collision.gameObject.tag == "Ball")
+        {
+            AddReward(-0.5f);
+            isHit = true;
+        }
+    }
+```
+
+Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen. Elk object heeft een tag ingesteld en wanneer de ontwijker iets aanraakt zal er hier worden gecontroleert wat er juist is geraakt en zal er dan correct op gereageerd worden.
+
+```cs (Dodger.cs)
+ IEnumerator DelayMethode()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1);
+            timePast = true;
+        }
+    }
+```
+
+Deze coroutine bepaalt om de hoeveel seconden een reward zal worden gegeven of afgenomen aan de Agent. Hier gaat er on de seconde een boolean op true worden gezet. Deze boolean wordt dan in een andere methode gebruikt om te bepalen of er een reward mag worden gegeven of afgenomen
+
+```cs (Dodger.cs)
+private void FixedUpdate()
+    {
+        //Add reward if dodger is on playing field
+        if (timePast)
+        {
+            if (isOnField)
+            {
+                AddReward(0.01f);
+            } else
+            {
+                AddReward(-0.5f);
+            }
+            timePast = false;
+        }
+        //Destroys dodger if he falls off from environment
+        if(transform.position.y < -1)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+```
+
+De FixedUpdate methode wordt elke seconden aangeroepen. Deze methode bepaalt voor een groot deel welke rewards er toegevoegd mogen worden zolang er genoeg tijd is gepasseerd (besproken in vorige methode).
 
 #### Bal
 
@@ -170,11 +330,113 @@ Zoals aangegeven door de comment hebben de eerste drie properties te maken met d
 
 De bal is het voorwerp dat de speler kan gooien om de ontwijkers en de power-ups te kunnen raken. De bal is een normale oranje/gele Sphere. Deze bevat ook een geluidsbestand die afspeelt van zodra de bal iets raakt.
 
+Het volgende script dat moet aangemaakt worden is het Ballhit script. Dit is het dat ervoor zorgt dat de bal zijn eigenschappen veranderen en het geluid afspeelt als de bal iets raakt.
+
+```cs (Ballhitscript.cs properties)
+    private bool startCount = false;
+    private bool hasMoved = false;
+    private float counter = 5f;
+    private Rigidbody body;
+    private Vector3 initialPostion;
+    private Environment environment;
+```
+
+- `Startcount`: Als deze op "True" staat, begint de timer te lopen om de ball te despawnen.
+- `HasMoved`: Als deze op true staat, gaat de gravity op aan, waardoor de bal valt als deze gegooid wordt.
+- `Bounter`: De timer die bepaalt na hoeveel tijd de bal despawned.
+- `Body`: De body van de bal die andere objecten kan raken
+- `InitialPosition`: De positie waarin de bal begint op het veld.
+- `Environment`: De environment waarin de bal moet spawnen.
+
+```cs (Ballhitscript.cs )
+    void OnCollisionEnter(Collision collision)
+    {
+        gameObject.GetComponent<AudioSource>().Play();
+        startCount = true;
+    }
+```
+
+De bal maakt een geluid als het iets raakt.
+
+```cs (Ballhitscript.cs update)
+void Update()
+    {
+        if (initialPostion != this.transform.position && !hasMoved)
+        {
+            hasMoved = true;
+            body.useGravity = true;
+            environment.ballHasBeenTakenNonTraining = true;
+        }
+        //Set ball to hazard when the countdown started
+        if (startCount == true)
+        {
+            transform.gameObject.tag = "Hazard";
+            counter -= Time.deltaTime;
+            //Destroy ball if countdown ended
+            if (counter <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+```
+
+De bal krijgt zwaartekracht als hij niet meer op zijn initiële plek is. Als de bal iets heeft geraakt begint de timer te lopen zodat de bal despawned en kan de bal geen ontwijkers meer van het veld verwijderen.
+
 #### Power-up
 
-![Bal](./Afbeeldingen/Power-up.jpg)
+![Power-Up](./Afbeeldingen/Power-up.jpg)
 
 De power-up zorgt ervoor dat de ballen die gegooid worden gedurende een korte tijd groter worden. Zo heeft de speler meer kans om de ontwijkers te raken. Deze gebruikt de bal prefab samen met een +-vormig gameobject dat bestaat uit twee langwerpige Cubes.
+
+De power-up bevat de twee volgende scripts.
+
+##### EnlargeBall
+
+```cs (EnlargeBall.cs Properties)
+public Environment MyEnvironment; 
+```
+
+De enige property is de environment waarin de bal zich bevind.
+
+```cs (EnlargeBall.cs OnTriggerEnter)
+private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Ball")
+        {
+            //Delete powerup from powerup list in environment 
+            MyEnvironment.powerUpList.Remove(gameObject);
+            Destroy(gameObject);
+            MyEnvironment.powerUpBall = true;
+        }
+    }
+```
+
+Als de powerup geraakt wordt, wordt deze verwijdert en worden de ballen groter.
+
+##### Rotate Around
+
+```cs (RotateAround.cs)
+public Transform target;
+    public int speed;
+    // Start is called before the first frame update
+    void Start()
+    {
+        if (target == null)
+        {
+            target = this.gameObject.transform;
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        transform.RotateAround(target.transform.position, target.transform.up, speed * Time.deltaTime);
+    }
+}
+```
+
+Dit simpel script zorgt ervoor dat een object rond zichzelf kan draaien of rond een object dat wordt meegegeven aan de parameter "target". Met speed kan je bepalen hoe snel het object rond zichzelf draait of rond het opgegeven object.
 
 ### Beschrijving gedragingen van de objecten
 
