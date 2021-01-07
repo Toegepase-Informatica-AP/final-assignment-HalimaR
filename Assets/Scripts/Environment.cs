@@ -46,7 +46,7 @@ public class Environment : MonoBehaviour
     private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
     public bool powerUpBall = false;
     private float largeScale = 3.5f;
-    private float largeTimer = 10f;
+    public float largeTimer = 10f;
 
     // Start is called before the first frame update
     void Start()
