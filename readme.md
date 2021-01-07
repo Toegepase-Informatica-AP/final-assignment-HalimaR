@@ -286,12 +286,10 @@ public void SpawnDodgers()
         dodgerLeft.transform.SetParent(dodgers.transform);
         dodgerLeft.transform.localPosition = standardPositionDL;
         dodgerLeft.name = "dodgerLeft";
-        Debug.Log("Spawn dodger middle");
         GameObject dodgerMiddle = Instantiate(dodgerPrefab, transform);
         dodgerMiddle.transform.SetParent(dodgers.transform);
         dodgerMiddle.transform.localPosition = standardPositionDM;
         dodgerMiddle.name = "dodgerMiddle";
-        Debug.Log("Spawn dodger right");
         GameObject dodgerRight = Instantiate(dodgerPrefab, transform);
         dodgerRight.transform.SetParent(dodgers.transform);
         dodgerRight.transform.localPosition = standardPositionDR;
