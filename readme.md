@@ -63,8 +63,6 @@ De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij o
 - Op het speelveld: + 0.01
 - Buiten het speelveld van de ontwijkers: - 0.5
 
-![RayPerceptions](./Afbeeldingen/RayPerceptions.jpg)
-
 ### Beschrijving en opbouw objecten
 
 #### Omgeving
@@ -408,6 +406,20 @@ Het speler-gameobject heeft op zich niet veel nut, maar wordt gebruikt bij de tr
 
 De ontwijker is het object waarop de AI zal worden toegepast. Deze zal aan de hand van de beschikbare acties, beloningen en observaties zo lang mogelijk proberen te overleven en de ballen te ontwijken.
 Deze bestaat uit een Capsule als lichaam met één grote witte Sphere als oog en verschillende kleinere zwarte Spheres als de iris van het oog. De zwarte irissen bevatten RayPerceptions die de andere gameobjecten kan waarnemen. Ook is er een plattere zwarte Sphere die dient als wenkbrauw.
+
+Omdat de Ontwijker getraind zal worden moet deze Ray Perceptions sensors hebben om zijn omgeving waar te nemen. De Ontwijker is voorzien van 5 Ray Perception sensors.
+
+1. Ray om rechtdoor te zien.
+
+1. Ray om in een schuine hoek omhoog te zien.
+
+1. Ray om in een schuine hoek omlaag te zien.
+
+1. Ray om recht naar beneden te zien volgens de X-as.
+
+1. Ray om recht naar beneden te zien volgens de Y-as.
+
+![RayPerceptions](./Afbeeldingen/RayPerceptions.jpg)
 
 Het volgende script dat moet aangemaakt worden is het Dodger script. Dit is het script dat de ontwijker en dus ook AI zal aansturen.
 
