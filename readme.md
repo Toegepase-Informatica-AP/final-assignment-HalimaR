@@ -80,7 +80,9 @@ De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij o
 
 ![Speelveld](./Afbeeldingen/Speelveld.jpg)
 
-De spelomgeving is een zaal met tribunes en toeschouwers. De toeschouwers hebben geen invloed op het spel. Alleen de grond (rood), speelveld (groen) en de middenlijn die het speelveld verdeelt in twee delen (wit) zijn van belang voor de ontwijker. De zaal zijn vier Panes die een rode material bevatten. Er zijn ook acht capsules aanwezig die een `spotlight` hebben om de zaal te verlichten. Het speelveld bestaat uit twee aparte platte `Cubes`. De tribunes zijn opgebouwd uit verscheidene `Cubes` die op elkaar gestapeld zijn en de toeschouwers zijn groene `Spheres` met twee paar witte en zwarte `Spheres` die ogen vormen. Ook is er een onzichtbare `Cube Box Collider` die ervoor zorgt dat de power-ups binnen zijn grenzen kan spawnen. De deuren en tekst op de muur zijn optioneel.
+![Tags](./Afbeeldingen/tags.jpg)
+
+De spelomgeving is een zaal met tribunes en toeschouwers. De toeschouwers hebben geen invloed op het spel. Alleen de grond (rood) en de twee delen in het speelveld (groen) zijn van belang voor de ontwijker. De zaal zijn vier Panes die een rode material bevatten. Er zijn ook acht capsules aanwezig die een `spotlight` hebben om de zaal te verlichten. Het speelveld bestaat uit twee aparte platte `Cubes`. De tribunes zijn opgebouwd uit verscheidene `Cubes` die op elkaar gestapeld zijn en de toeschouwers zijn groene `Spheres` met twee paar witte en zwarte `Spheres` die ogen vormen. Ook is er een onzichtbare `Cube Box Collider` die ervoor zorgt dat de power-ups binnen zijn grenzen kan spawnen. De deuren en tekst op de muur zijn optioneel.
 
 Het eerste wat men moet doen is het maken van een environment script:
 
