@@ -5,15 +5,17 @@
 | Collette Cédric | s107601 |
 | Van Nueten Wouter | s107229 |
 | Rahimi Halima | s101035 |
-| Chauvaux Nico | |
+| Chauvaux Nico | s110458 |
 | Messiaen Ruben | |
 
-# Inhoudstafel
+## Inhoudstafel
 
 1. [Inleiding](##Inleiding)
 2. [Samenvatting](##Samenvatting)
 3. [Methoden](##Methoden)
-
+4. [Resultaten](##Resultaten)
+5. [VR-instellingen](##VR-Instellingen)
+6. [Conclusie](##Conclusie)
 
 ## Inleiding
 
@@ -30,19 +32,19 @@ Met deze handleiding geven wij stap voor stap uitleg hoe men van een leeg Unity 
 Voor het spel werkende krijgen zijn er verschillende installaties vereist:
 
 - Unity: 2019.4.10f1
-- ML-Agents: 0.21.1
+- ML-Agents: 1.0.5
 - Unity Oculus XR Plugin: 1.4.3
 - Anaconda: 4.8.3
 
 ### Spelverloop
 
-Bij het eerst inladen van de VR omgeving zal de speler zich bevinden in een sportzaal op een speelveld. De speler zal gecentreerd op een helft van dat speelveld staan. Aan de andere kant van het speelveld bevinden zich drie rode pion achtige firguren. Dit zijn de ontwijkers.
+Bij het eerst inladen van de VR omgeving zal de speler zich bevinden in een sportzaal op een speelveld. De speler zal gecentreerd op een helft van dat speelveld staan. Aan de andere kant van het speelveld bevinden zich drie rode pion-achtige figuren. Dit zijn de ontwijkers.
 
-Het doel van het spel is dat de speler de ontwijkers uit schakelt met behulp van een ongelimiteerde hoeveelheid ballen die de speler kan gooien. Zolang de bal de ontwijker eerst raakt zal de ontwijker zijn uit geschakelt. Als de bal de grond eerst raakt en dan pas tegen de ontwijker telt dit dus niet mee. De ontwijkers zullen actief deze ballen proberen ontwijken. Zij hebben in tegenstelling tot de speler wel de vrijheid om zich te verplaatsen op hun zijde van het speelveld.
+Het doel van het spel is dat de speler de ontwijkers uitschakelt met behulp van een ongelimiteerde hoeveelheid ballen die de speler kan gooien. Zolang de bal de ontwijker eerst raakt zal de ontwijker zijn uitgeschakeld. Als de bal de grond eerst raakt en dan pas tegen de ontwijker telt dit dus niet mee. De ontwijkers zullen actief deze ballen proberen ontwijken. Zij hebben in tegenstelling tot de speler wel de vrijheid om zich te verplaatsen op hun zijde van het speelveld.
 
 Tijdens het spel zullen er "power-ups" tevoorschijn komen. Deze power-ups bevinden zich op willekeurige plekken boven het veld. Als de speler een power-up kan raken door er een bal tegen te gooien zal die power-up voor een gelimiteerde tijd geactiveerd worden. Dat zorgt er dan voor dat de ballen die speler kan gooien groter zijn dan normaal. Hierdoor zal het dus makkelijker zijn om de ontwijkers te raken.
 
-Het spel duurt maximaal 120 seconden. Als de speler binnen deze tijd de drie ontwijkers krijgt uitgeschakelt is het spel gewonnen. Als de tijd op is voor alle ontwijkers zijn uitgeschakelt is het spel verloren en moet de speler opnieuw beginnen.
+Het spel duurt maximaal 120 seconden. Als de speler binnen deze tijd de drie ontwijkers krijgt uitgeschakeld is het spel gewonnen. Als de tijd op is voor alle ontwijkers zijn uitgeschakeld is het spel verloren en moet de speler opnieuw beginnen.
 
 ### Observaties, acties en beloningen
 
@@ -50,11 +52,11 @@ Het spel duurt maximaal 120 seconden. Als de speler binnen deze tijd de drie ont
 
 De ontwijker kan verscheidene dingen observeren in het speelveld. Dit zijn de verschillende observaties die de ontwijker kan hebben:
 
-- PlayingGround: Het deel van het speelveld waar de ontwijkers op moeten blijven.
-- Player: De ontwijker kan de speler zien, zodat hij weet waar de ballen vandaan komen.
-- Ball: De ontwijker kan de ballen zien aankomen, waardoor hij deze kan ontwijken.
-- Dodger: De ontwijkers kunnen ook elkaar zien, zodat ze kunnen vermijden dat ze tegen elkaar oplopen.
-- Ground: De ontwijkers kunnen de grond zien van de rest van het veld dat geen speelveld is, zodat ze kunnen vermijden daarop te lopen.
+- `PlayingGround`: Het deel van het speelveld waar de ontwijkers op moeten blijven.
+- `Player`: De ontwijker kan de speler zien, zodat hij weet waar de ballen vandaan komen.
+- `Ball`: De ontwijker kan de ballen zien aankomen, waardoor hij deze kan ontwijken.
+- `Dodger`: De ontwijkers kunnen ook elkaar zien, zodat ze kunnen vermijden dat ze tegen elkaar oplopen.
+- `Ground`: De ontwijkers kunnen de grond zien van de rest van het veld dat geen speelveld is, zodat ze kunnen vermijden daarop te lopen.
 
 Dit zijn eveneens de tags die de andere gameobjecten bevatten zodat de ontwijker ze kan herkennen.
 
@@ -66,9 +68,11 @@ De ontwijker kan rondbewegen en springen, zodat hij de bal kan ontwijken. De spe
 
 De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij onderneemt tijdens het spelverloop:
 
-- Geraakt door bal: - 0.5
 - Op het speelveld: + 0.01
 - Buiten het speelveld van de ontwijkers: - 0.5
+- Geraakt door bal: - 0.5
+
+![Rewards](Afbeeldingen/Rewards.png)
 
 ### Beschrijving en opbouw objecten
 
@@ -76,17 +80,17 @@ De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij o
 
 ![Speelveld](./Afbeeldingen/Speelveld.jpg)
 
-De spelomgeving is een zaal met tribunes en toeschouwers. De toeschouwers hebben geen invloed op het spel. Alleen de grond (rood), speelveld (groen) en de middenlijn die het speelveld verdeelt in twee delen (wit) zijn van belang voor de ontwijker. De zaal zijn vier Panes die een rode material bevatten. Er zijn ook acht capsules aanwezig die een spotlight hebben om de zaal te verlichten. Het speelveld bestaat uit twee aparte platte Cubes. De tribunes zijn opgebouwd uit verscheidene Cubes die op elkaar gestapeld zijn en de toeschouwers zijn groene Spheres met twee paar witte en zwarte Spheres die ogen vormen. Ook is er een onzichtbare Cube Box Collider die ervoor zorgt dat de power-ups binnen zijn grenzen kan spawnen. De deuren en tekst op de muur zijn optioneel.
+De spelomgeving is een zaal met tribunes en toeschouwers. De toeschouwers hebben geen invloed op het spel. Alleen de grond (rood), speelveld (groen) en de middenlijn die het speelveld verdeelt in twee delen (wit) zijn van belang voor de ontwijker. De zaal zijn vier Panes die een rode material bevatten. Er zijn ook acht capsules aanwezig die een `spotlight` hebben om de zaal te verlichten. Het speelveld bestaat uit twee aparte platte `Cubes`. De tribunes zijn opgebouwd uit verscheidene `Cubes` die op elkaar gestapeld zijn en de toeschouwers zijn groene `Spheres` met twee paar witte en zwarte `Spheres` die ogen vormen. Ook is er een onzichtbare `Cube Box Collider` die ervoor zorgt dat de power-ups binnen zijn grenzen kan spawnen. De deuren en tekst op de muur zijn optioneel.
 
 Het eerste wat men moet doen is het maken van een environment script:
 
 1. Selecteer het speelveld in dit geval zal dit de Gym zijn.
 2. In de inspector klikt men op `Add Component`.
-3. In de components lijst klikt men op `New Script` (dit bevindt zich onder aan)
-4. geef de script de naam "Environment"
-5. dan klikt men op `Create and Add`
+3. In de components lijst klikt men op `New Script` (dit bevindt zich onder aan).
+4. Geef de script de naam "Environment".
+5. Dan klikt men op `Create and Add`.
 
-laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. We beginnen met enkele object-variabelen toetevoegen.
+In de Unity Project window dubbel klikt men op `Environment.cs`, dit opent het script in de code editor. Men begint met enkele object-variabelen toe te voegen.
 
 ```cs (Environment.cs)
     public const float MAXTIME = 120f;
@@ -124,43 +128,43 @@ laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op
 
 ```
 
-We beginnen met enkele publieke object-variabelen.
+Men begint met enkele publieke object-variabelen.
 
-- `MAXTIME` toont aan hoelang elke episode zal duren.
-- `ballAverageSpawnTimer` geeft weer hoelang het duurt voor een bal spawnt
-- `TrainingMode` is bedoelt voor het trainen van de ML-agent, wanneer dit op true staat zullen de ballen vanzelf geworpen worden.
-- `ballHasBeenTakenNonTraining` zal de speler zelf de bal kunnen oprapen en de mogelijkheid hebben om te hooien.
-- `powerUpBall` wordt nagekeken of de bal een power-up heeft geraakt.
-- `ballPrefab` komt de prefab object van de bal.
-- `dodgerPrefab` komt de prefab object van de dodger.
-- `powerUpSpawnLocation` is de locatie waar in de power-ups mogen spawnen.
-- `powerUpPrefab` komt de prefab object van de power-up.
-- `powerUpList` lijst waar de power-ups in toegevoegd worden.
-- `dodgersList` lijst waar de dodgers in toegevoegd worden.
+- `MAXTIME`: Toont aan hoelang elke episode zal duren.
+- `ballAverageSpawnTimer`: Geeft weer hoelang het duurt voor een bal spawnt.
+- `TrainingMode`: Is bedoelt voor het trainen van de ML-agent, wanneer dit op true staat zullen de ballen vanzelf geworpen worden.
+- `ballHasBeenTakenNonTraining`: Zal de speler zelf de bal kunnen oprapen en de mogelijkheid hebben om te hooien.
+- `powerUpBall`: Wordt nagekeken of de bal een power-up heeft geraakt.
+- `ballPrefab`: Komt de prefab object van de bal.
+- `dodgerPrefab`: Komt de prefab object van de dodger.
+- `powerUpSpawnLocation`: Is de locatie waar in de power-ups mogen spawnen.
+- `powerUpPrefab`: Komt de prefab object van de power-up.
+- `powerUpList`: Lijst waar de power-ups in toegevoegd worden.
+- `dodgersList`: Lijst waar de dodgers in toegevoegd worden.
 
-De volgende variablen zijn de private objecten.
+De volgende variabelen zijn de private objecten.
 
-- `POWERUP_SPAWNTIMER` geeft aan hoelang het duurt vooralleer een power-up zal spawnen.
-- `episodeTime` toont hoelang elke episode zal duren.
-- `ballRespawnTime` geeft aan hoelang het duurt vooralleer een bal zal spawnen.
-- `currentScore` toont de score.
-- `currentUpgradeTimer` zorgt ervoor dat er een timer is tussen het werpen van de bal.
-- `largeScale` zorgt ervoor wanneer een bal tegen een power-up komt de bal groter word.
-- `largeTimer`zorgt ervoor dat de power-up een bepaalde tijd actief blijft.
-- `throwing` is vooral bedoelt voor het trainen van de ML-agent, die zorgt ervoor dat de `ballSpawner` wordt aangeroepen.
-- `spawnDodgers` spawnt de dodgers.
-- `spawningPowerups` spant de power-ups
-- `random` is een variabelen die gebruikt wordt om de random positie van een dodger op te halen.
-- `ballSpawnpointNonTraining` wordt de spawn point gekoppeld.
-- `balls` wordt de GameObject bal gekoppeld.
-- `dodgers` wordt de GameObject dodger gekoppeld.
+- `POWERUP_SPAWNTIMER`: Geeft aan hoelang het duurt vooralleer een power-up zal spawnen.
+- `episodeTime`: Toont hoelang elke episode zal duren.
+- `ballRespawnTime`: Geeft aan hoelang het duurt vooralleer een bal zal spawnen.
+- `currentScore`: Toont de score.
+- `currentUpgradeTimer`: Zorgt ervoor dat er een timer is tussen het werpen van de bal.
+- `largeScale`: Zorgt ervoor wanneer een bal tegen een power-up komt de bal groter word.
+- `largeTimer`: Zorgt ervoor dat de power-up een bepaalde tijd actief blijft.
+- `throwing`: Is vooral bedoelt voor het trainen van de ML-agent, die zorgt ervoor dat de `ballSpawner` wordt aangeroepen.
+- `spawnDodgers`: Spawnt de dodgers.
+- `spawningPowerups`: Spawnt de power-ups.
+- `random`: Is een variabelen die gebruikt wordt om de random positie van een dodger op te halen.
+- `ballSpawnpointNonTraining`: Wordt de spawn point gekoppeld.
+- `balls`: Wordt de GameObject bal gekoppeld.
+- `dodgers`: Wordt de GameObject dodger gekoppeld.
 - `standardPositionDL`, `standardPositionDM`, `standardPositionDR` zijn de spawn posities van de dodegers.
-- `scoreboard` geeft de score weer.
-- `powerUpSpawnBox` zorgt ervoor dat de power-ups niet buiten het speelveld spawnen.
+- `scoreboard`: Geeft de score weer.
+- `powerUpSpawnBox`: Zorgt ervoor dat de power-ups niet buiten het speelveld spawnen.
 
-### initializatie van Environment
+### Initialisatie van Environment
 
-In De Start methode gebeurt de initialisatie van enkele bovenstaande referenties en wordt als eerste opgeroepen, voor dat het spel begint wordt deze methode uitgevoerd. In de if statement wordt er gekeken of de bool Training Mode op false staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Wat belangrijk is dat de `Find()` en `GetComponentInChildren` op de `transform` van `environment` staat. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene om het dan te laten trainen.
+In de `Start` methode gebeurt de initialisatie van enkele bovenstaande referenties en wordt als eerste opgeroepen tijdens het runnen van het spel. In het `if-statement` wordt er gekeken of de `bool` `Training Mode` op `false` staat als dit zo is zullen de ballen niet vanzelf gegooid worden maar moet de speler dit doen. Wat belangrijk is dat de `Find` en `GetComponentInChildren` op de `transform` van `environment` staat. Dit wordt gedaan omdat we later de omgeving gym gaan dupliceren binnen dezelfde scene om het dan te laten trainen.
 
 ```cs (Environment.cs)
 void Start()
@@ -185,7 +189,7 @@ void Start()
     }
 ```
 
-De methode `Update()` wordt per frame aangeroepen. Er word gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing`, `spawningPowerups` en `powerUpList` op false staan.
+De methode `Update` wordt per frame aangeroepen. Er wordt gekeken wanneer de bal een power-up raakt. Er wordt ook nagekeken of de boolean `throwing`, `spawningPowerups` en `powerUpList` op `false` staan.
 
 ```cs (Environment.cs)
 void Update()
@@ -215,7 +219,7 @@ void Update()
     }
 ```
 
-In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geupdate dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
+In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de `if-statement` naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geüpdatet. Dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de `for-loop` wordt de score aan het `scoreboard` toegekend.
 
 ```cs (Environment.cs)
 void FixedUpdate()
@@ -260,7 +264,7 @@ void FixedUpdate()
     }
 ```
 
-De `SpawnDodgersGameobject` methode spawnd de dodgers elke keer als een episode beëindigd is. De dodgers worden willekeurig in hun speelveld geplatst.
+De `SpawnDodgersGameobject` methode spawnt de dodgers elke keer als een episode beëindigd is. De dodgers worden willekeurig in hun speelveld geplaatst.
 
 ```cs (Environment.cs)
  private void SpawnDodgersGameobject()
@@ -272,7 +276,7 @@ De `SpawnDodgersGameobject` methode spawnd de dodgers elke keer als een episode 
     }
 ```
 
-In de `ResetEnvironment` methode word het voledige environment gereset. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt dit word ook bij de `dodgers` gedaan. de respawn van de dodgers, de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op true gezet en de `throwing`, `spawningPowerups` worden op false gezet.
+In de `ResetEnvironment` methode word het volledige environment gereset. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt, dit word ook bij de `dodgers` gedaan. De respawn van de dodgers, de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op `True` gezet en de `throwing`, `spawningPowerups` worden op `False` gezet.
 
 ```cs (Environment.cs)
  public void ResetEnvironment()
@@ -298,7 +302,7 @@ In de `ResetEnvironment` methode word het voledige environment gereset. De power
     }
 ```
 
-De `SpawnDodgers` methode zorgt ervoor dat de dodgers terug respawen wanneer de `dodgersList` leeg is en of wanneer de episode eindigt. De drie dodgers worden één per één aangemaakt en aan de list `dodgersList` toegevoegd.
+De `SpawnDodgers` methode zorgt ervoor dat de dodgers terug respawnen wanneer de `dodgersList` leeg is en/of wanneer de episode eindigt. De drie dodgers worden één per één aangemaakt en aan de list `dodgersList` toegevoegd.
 
 ```cs (Environment.cs)
 public void SpawnDodgers() 
@@ -320,7 +324,7 @@ public void SpawnDodgers()
     }
 ```
 
-Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hier in wordt de tijd van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige dodger toegewezen aan de bal.
+Voor de methode `BallSpawner` heeft men gekozen voor een `StartCoroutine`, hiermee kan men in de coroutine de code op elk moment pauzeren door gebruik te maken van yield. Hierin wordt de tijd van de ballrespawn om de zoveel seconden aangeroepen. In deze methode worden de spawn van de ballen uitgevoerd samen met de positie van de bal. De ballen krijgen hier ook de richting waar ze naartoe gegooid moeten worden. Door de `randomDodgerPosition` word een willekeurige `dodger` toegewezen aan het doelwit van de bal.
 
 ```cs (Environment.cs)
  IEnumerator BallSpawner()
@@ -358,7 +362,7 @@ Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hierm
     }
 ```
 
-De `SpawnBall` methode spawnd de ballen elke keer als een episode beëindigd is.
+De `SpawnBall` methode spawnt de ballen elke keer als een episode beëindigd is.
 
 ```cs (Environment.cs)
 private void SpawnBall()
@@ -391,7 +395,7 @@ IEnumerator PowerUpSpawner()
     }
 ```
 
-Bij de `EndAllEpisodes` methode worden alle episode van elke dodger beëindigd. Als er nog dodger in de lijst `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
+Bij de `EndAllEpisodes` methode worden alle episode van elke `dodger` beëindigd. Als er nog `dodgers` in de lijst `dodgersList` staan worden hun episode ook beëindigd en uit de list verwijderd.
 
 ```cs (Environment.cs)
  private void EndAllEpisodes()
@@ -422,9 +426,9 @@ Het speler-gameobject heeft op zich niet veel nut, maar wordt gebruikt bij de tr
 ![Ontwijker](./Afbeeldingen/Ontwijker.jpg)
 
 De ontwijker is het object waarop de AI zal worden toegepast. Deze zal aan de hand van de beschikbare acties, beloningen en observaties zo lang mogelijk proberen te overleven en de ballen te ontwijken.
-Deze bestaat uit een Capsule als lichaam met één grote witte Sphere als oog en verschillende kleinere zwarte Spheres als de iris van het oog. De zwarte irissen bevatten RayPerceptions die de andere gameobjecten kan waarnemen. Ook is er een plattere zwarte Sphere die dient als wenkbrauw.
+Deze bestaat uit een `Capsule` als lichaam met één grote witte `Sphere` als oog en verschillende kleinere zwarte `Spheres` als de iris van het oog. De zwarte irissen bevatten `RayPerceptions` die de andere gameobjecten kan waarnemen. Ook is er een plattere zwarte `Sphere` die dient als wenkbrauw.
 
-Omdat de Ontwijker getraind zal worden moet deze Ray Perceptions sensors hebben om zijn omgeving waar te nemen. De Ontwijker is voorzien van 5 Ray Perception sensors.
+Omdat de ontwijker getraind zal worden moet deze `Ray Perceptions sensors` hebben om zijn omgeving waar te nemen. De ontwijker is voorzien van 5 `Ray Perception sensors`.
 
 | Ray | Tags | Richting |
 | --- | ---- | -------- |
@@ -436,7 +440,7 @@ Omdat de Ontwijker getraind zal worden moet deze Ray Perceptions sensors hebben 
 
 ![RayPerceptions](./Afbeeldingen/RayPerceptions.jpg)
 
-Het volgende script dat moet aangemaakt worden is het Dodger script. Dit is het script dat de ontwijker en dus ook AI zal aansturen.
+Het volgende script dat moet aangemaakt worden is het `Dodger` script. Dit is het script dat de ontwijker en dus ook AI zal aansturen.
 
 Dit zijn alle properties die in deze klasse worden gedefinieerd
 
@@ -453,15 +457,15 @@ Dit zijn alle properties die in deze klasse worden gedefinieerd
     private bool isOnField;
 ```
 
-- `MovingSpeed` Bepaalt de snelheid waarin de ontwijker kan lopen.
-- `Force` De kracht waarmee de ontwijker kan springen.
-- `body` Is van type Rigidbody en wordt bijgehouden zodat er krachten gelijk springen kunnen worden uitgeoefend op het fysieke object in de wereld.
-- `canJump` is een vanzelfsprekende boolean.
-- `isHit` Een boolean die true is als de dodger geraakt is. Deze property wordt voor de rest niet binnen het dodger script zelf gebruikt maar is wel belanngrijk voor andere scripts. Daarom dat het een public property is.
-- `timePast` wordt gebruikt om te bepalen wanneer een dodger reward krijgt en/of van afgenomen wordt.
-- `isOnField` geeft aan of de ontwijker in het veld is of niet.
+- `MovingSpeed`: Bepaalt de snelheid waarin de ontwijker kan lopen.
+- `Force`: De kracht waarmee de ontwijker kan springen.
+- `body`: Is van type `Rigidbody` en wordt bijgehouden zodat er krachten gelijk springen kunnen worden uitgeoefend op het fysieke object in de wereld.
+- `canJump`: Is een vanzelfsprekende boolean.
+- `isHit`: Een boolean die true is als de dodger geraakt is. Deze property wordt voor de rest niet binnen het `Dodger` script zelf gebruikt maar is wel belangrijk voor andere scripts. Daarom dat het een public property is.
+- `timePast`: Wordt gebruikt om te bepalen wanneer een ontwijker een reward krijgt en/of van afgenomen wordt.
+- `isOnField`: Geeft aan of de ontwijker in het veld is of niet.
 
-De Initialize methode wordt standaard aangeroepen als de ontwijker wordt gespawned of met andere woorden dus geinitialiseerd.
+De Initialize methode wordt standaard aangeroepen als de ontwijker wordt gespawned of met andere woorden dus geïnitialiseerd.
 
 ```cs (Dodger.cs)
 public override void Initialize()
@@ -476,16 +480,16 @@ public override void Initialize()
     }
 ```
 
-De klasse erft over van de Agent klasse
+De klasse erft over van de `Agent` klasse
 
 ```cs (Dodger.cs)
 public class Dodger : Agent
 ```
 
-De Agent klasse (base van deze klasse) moet ook geinitialiseerd worden. Daarom is de eerste lijn `base.Initialize()`.
-Verder wordt hier de body aangevuld, de coroutine gestart die later wordt toe gelicht en de booleans op de juiste waarden gezet.
+De Agent klasse (base van deze klasse) moet ook geïnitialiseerd worden. Daarom is de eerste lijn `base.Initialize()`.
+Verder wordt hier de `body` aangevuld, de `coroutine` gestart die later wordt toe gelicht en de booleans op de juiste waarden gezet.
 
-De OnActionReceived methode is verantwoordelijk voor bepaalde acties uit te voeren bij bepaalde inputs. Dit wordt door MLAgents gebruikt en de AI kan deze acties aanspreken. Dankzij deze acties kunnen de ontwijkers dus bewegen.
+De `OnActionReceived` methode is verantwoordelijk voor bepaalde acties uit te voeren bij bepaalde inputs. Dit wordt door MLAgents gebruikt en de AI kan deze acties aanspreken. Dankzij deze acties kunnen de ontwijkers dus bewegen.
 
 ```cs (Dodger.cs)
 public override void OnActionReceived(float[] vectorAction)
@@ -510,7 +514,7 @@ public override void OnActionReceived(float[] vectorAction)
     }
 ```
 
-De Heuristic methode geeft de mogelijkheid om de ontwijkers te besturen met zelf bepaalde inputs van het toetsenbord. Wanneer er een input wordt gedetecteerd zullen de acties van de OnActionReceived methode worden uitgevoerd.
+De `Heuristic` methode geeft de mogelijkheid om de ontwijkers te besturen met zelf bepaalde inputs van het toetsenbord. Wanneer er een input wordt gedetecteerd zullen de acties van de `OnActionReceived` methode worden uitgevoerd.
 
 ```cs (Dodger.cs)
 public override void Heuristic(float[] actionsOut)
@@ -543,7 +547,7 @@ public override void Heuristic(float[] actionsOut)
     }
 ```
 
-De spring actie is in een aparte methode zodat die makkelijk van meerdere plekken kan worden aangeroepen
+De `Jump` actie is in een aparte methode zodat die makkelijk van meerdere plekken kan worden aangeroepen.
 
 ```cs (Dodger.cs)
 private void Jump()
@@ -557,7 +561,7 @@ private void Jump()
     }
 ```
 
-Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen. Elk object heeft een tag ingesteld en wanneer de ontwijker iets aanraakt zal er hier worden gecontroleert wat er juist is geraakt en zal er dan correct op gereageerd worden.
+Wanneer de ontwijker een ander object raakt zal deze methode worden aangeroepen. Elk object heeft een tag ingesteld en wanneer de ontwijker iets aanraakt zal er hier worden gecontroleerd wat er juist is geraakt en er zal dan correct op gereageerd worden.
 
 ```cs (Dodger.cs)
 public void OnCollisionEnter(Collision collision)
@@ -580,7 +584,7 @@ public void OnCollisionEnter(Collision collision)
     }
 ```
 
-Deze coroutine bepaalt om de hoeveel seconden een reward zal worden gegeven of afgenomen aan de Agent. Hier gaat er on de seconde een boolean op true worden gezet. Deze boolean wordt dan in een andere methode gebruikt om te bepalen of er een reward mag worden gegeven of afgenomen
+Deze `coroutine` bepaalt om de hoeveel seconden een reward zal worden gegeven of afgenomen aan de Agent. Hier gaat er om de seconde een boolean op `true` worden gezet. Deze boolean wordt dan in een andere methode gebruikt om te bepalen of er een reward mag worden gegeven of afgenomen.
 
 ```cs (Dodger.cs)
  IEnumerator DelayMethode()
@@ -593,7 +597,7 @@ Deze coroutine bepaalt om de hoeveel seconden een reward zal worden gegeven of a
     }
 ```
 
-De FixedUpdate methode wordt elke seconden aangeroepen. Deze methode bepaalt voor een groot deel welke rewards er toegevoegd mogen worden zolang er genoeg tijd is gepasseerd (besproken in vorige methode).
+De `FixedUpdate` methode wordt elke seconden aangeroepen. Deze methode bepaalt voor een groot deel welke rewards er toegevoegd mogen worden zolang er genoeg tijd is gepasseerd (besproken in vorige methode).
 
 ```cs (Dodger.cs)
 private void FixedUpdate()
@@ -622,9 +626,9 @@ private void FixedUpdate()
 
 ![Bal](./Afbeeldingen/Bal.jpg)
 
-De bal is het voorwerp dat de speler kan gooien om de ontwijkers en de power-ups te kunnen raken. De bal is een normale oranje/gele Sphere. Deze bevat ook een geluidsbestand die afspeelt van zodra de bal iets raakt.
+De bal is het voorwerp dat de speler kan gooien om de ontwijkers en de power-ups te kunnen raken. De bal is een normale oranje/gele `Sphere`. Deze bevat ook een geluidsbestand die afspeelt van zodra de bal iets raakt.
 
-Het volgende script dat moet aangemaakt worden is het Ballhit script. Dit is het dat ervoor zorgt dat de bal zijn eigenschappen veranderen en het geluid afspeelt als de bal iets raakt.
+Het volgende script dat moet aangemaakt worden is het `Ballhitscript`. Dit is het dat ervoor zorgt dat de bal zijn eigenschappen veranderen en het geluid afspeelt als de bal iets raakt.
 
 ```cs (Ballhitscript.cs properties)
     private bool startCount = false;
@@ -635,12 +639,14 @@ Het volgende script dat moet aangemaakt worden is het Ballhit script. Dit is het
     private Environment environment;
 ```
 
-- `Startcount`: Als deze op "True" staat, begint de timer te lopen om de ball te despawnen.
-- `HasMoved`: Als deze op true staat, gaat de gravity op aan, waardoor de bal valt als deze gegooid wordt.
+- `Startcount`: Als deze op `True` staat, begint de timer te lopen om de ball te despawnen.
+- `HasMoved`: Als deze op `True` staat, gaat de `Gravity` op `Enabled`, waardoor de bal reageert op zwaartekracht.
 - `Bounter`: De timer die bepaalt na hoeveel tijd de bal despawned.
-- `Body`: De body van de bal die andere objecten kan raken
+- `Body`: De `body` van de bal die andere objecten kan raken
 - `InitialPosition`: De positie waarin de bal begint op het veld.
-- `Environment`: De environment waarin de bal moet spawnen.
+- `Environment`: De `environment` waarin de bal moet spawnen.
+
+De bal maakt een geluid als het iets raakt.
 
 ```cs (Ballhitscript.cs )
     void OnCollisionEnter(Collision collision)
@@ -650,7 +656,7 @@ Het volgende script dat moet aangemaakt worden is het Ballhit script. Dit is het
     }
 ```
 
-De bal maakt een geluid als het iets raakt.
+De bal krijgt zwaartekracht als hij niet meer op zijn initiële plek is. Als de bal iets heeft geraakt begint de timer te lopen zodat de bal despawned en kan de bal geen ontwijkers meer van het veld verwijderen.
 
 ```cs (Ballhitscript.cs update)
 void Update()
@@ -675,13 +681,11 @@ void Update()
     }
 ```
 
-De bal krijgt zwaartekracht als hij niet meer op zijn initiële plek is. Als de bal iets heeft geraakt begint de timer te lopen zodat de bal despawned en kan de bal geen ontwijkers meer van het veld verwijderen.
-
 #### Power-up
 
 ![Power-Up](./Afbeeldingen/Power-up.jpg)
 
-De power-up zorgt ervoor dat de ballen die gegooid worden gedurende een korte tijd groter worden. Zo heeft de speler meer kans om de ontwijkers te raken. Deze gebruikt de bal prefab samen met een +-vormig gameobject dat bestaat uit twee langwerpige Cubes.
+De power-up zorgt ervoor dat de ballen die gegooid worden gedurende een korte tijd groter worden. Zo heeft de speler meer kans om de ontwijkers te raken. Deze gebruikt de `ball` prefab samen met een +-vormig gameobject dat bestaat uit twee langwerpige `Cubes`.
 
 De power-up bevat de twee volgende scripts.
 
@@ -692,6 +696,8 @@ public Environment MyEnvironment;
 ```
 
 De enige property is de environment waarin de bal zich bevind.
+
+Als de powerup geraakt wordt, wordt deze verwijdert en worden de ballen groter.
 
 ```cs (EnlargeBall.cs OnTriggerEnter)
 private void OnTriggerEnter(Collider other)
@@ -706,9 +712,9 @@ private void OnTriggerEnter(Collider other)
     }
 ```
 
-Als de powerup geraakt wordt, wordt deze verwijdert en worden de ballen groter.
-
 ##### Rotate Around
+
+Dit simpel script zorgt ervoor dat een object rond zichzelf kan draaien of rond een object dat wordt meegegeven aan de parameter "target". Met speed kan je bepalen hoe snel het object rond zichzelf draait of rond het opgegeven object.
 
 ```cs (RotateAround.cs)
 public Transform target;
@@ -730,15 +736,16 @@ public Transform target;
 }
 ```
 
-Dit simpel script zorgt ervoor dat een object rond zichzelf kan draaien of rond een object dat wordt meegegeven aan de parameter "target". Met speed kan je bepalen hoe snel het object rond zichzelf draait of rond het opgegeven object.
-
 ### Beschrijving gedragingen van de objecten
 
 #### Omgeving gedragingen
 
-Het speelveld zelf zal nergens op reageren of heeft geen acties die het kan ondernemen. Het speelveld en de grond krijgen wel verschillende tags mee zodat de ontwijker tijdens de training afgestraft wordt en zodat de ontwijker tijdens het spel weet waar hij wel en niet mag lopen. De onzichtbare Box Collider krijgt ook een tag waardoor de power-ups binnen deze grenzen spawnen.
+Het speelveld zelf zal nergens op reageren of heeft geen acties die het kan ondernemen. Het speelveld en de grond krijgen wel verschillende tags mee zodat de ontwijker tijdens de training afgestraft wordt en zodat de ontwijker tijdens het spel weet waar hij wel en niet mag lopen. De onzichtbare `Box Collider` krijgt ook een tag waardoor de power-ups binnen deze grenzen spawnen.
+Het speelveld krijgt wel het `Environment Script` mee. Dit zorgt ervoor dat de rest van de gameobjecten goed met elkaar reageren.
 
 ![Voorbeeld tag](./Afbeeldingen/VoorbeeldTag.jpg)
+
+![Environment property](Afbeeldingen/EnvironmentProperty.jpg)
 
 #### Speler gedragingen
 
@@ -746,15 +753,21 @@ Het object speler heeft geen gedragingen. De speler zelf in de VR-omgeving gaat 
 
 #### Ontwijker gedragingen
 
-Ontwijkers gaan aan de hand van het speelveld en de ballen zich zodanig proberen te manouvreren zodat ze de ballen kunnen ontwijken. Hoe langer ze zichzelf in leven kunnen houden, des te meer punten ze krijgen. Voor de AI krijgt de ontwijker een BehaviourParameters script mee. Voor de acties die de ontwijker kan ondernemen krijgt de ontwijker het Dodger script mee.
+Ontwijkers gaan aan de hand van het speelveld en de ballen zich zodanig proberen te manouvreren zodat ze de ballen kunnen ontwijken. Hoe langer ze zichzelf in leven kunnen houden, des te meer punten ze krijgen. Voor de AI krijgt de ontwijker een `BehaviourParameters` script mee. Voor de acties die de ontwijker kan ondernemen krijgt de ontwijker het Dodger script mee. De irissen van de dodger krijgen het `Ray Perception Sensor 3D` script mee om hun omgeving te kunnen observeren.
 
 ![Dodger properties](./Afbeeldingen/DodgerProperties.jpg)
 
+![Dodger perception](Afbeeldingen/DodgerPerception.jpg)
+
 #### Bal gedragingen
 
-De bal zorgt ervoor dat de ontwijkers van het speelveld gaan als deze een ontwijker raakt. Ook zorgt de bal ervoor dat de speler de power-ups kan raken zodat deze zijn ballen kan vergroten. Deze bevat dus de BallHit script en een Audio Source.
+De bal zorgt ervoor dat de ontwijkers van het speelveld gaan als deze een ontwijker raakt. Ook zorgt de bal ervoor dat de speler de power-ups kan raken zodat deze zijn ballen kan vergroten. Deze bevat dus de `BallHitscript` en een `Audio Source`. Er is ook een script toegevoegd dat ervoor zorgt dat de bal grijpbaar is in VR en dat deze gegooid kan worden met behulp van de VR controller.
 
-![Ball properties](./Afbeeldingen/BallProperties.jpg)
+![Ball properties Collider](./Afbeeldingen/BallPropertiesCollider.jpg)
+
+![Ball properties script en audio](./Afbeeldingen/BallPropertiesScriptEnAudio.jpg)
+
+![Ball Properties grabable](./Afbeeldingen/BallPropertiesGrabable.jpg)
 
 #### Power-up gedragingen
 
@@ -774,7 +787,7 @@ Er staat in de one-pager dat de AI's niet hetzelfde reward-systeem gaan hebben. 
 
 ## Training Methode
 
-Om de Ontwijkers te trainen hebben we volgende training configuratie gebruikt.
+Om de ontwijkers te trainen hebben we volgende training configuratie gebruikt.
 
 ### Dodger.yaml
 
@@ -841,11 +854,11 @@ Bij de eerste training werden al de parameters op de standaardwaarden gebruikt.
 
 __Gedragingen:__
 
-- De Ontwijkers groeperen in een hoek en duwen elkaar van het speelveld.
-- De Ontwijkers lopen naar de kant van de werper op het speelveld en kunnen vervolgens niet meer geraakt worden.
-- De Ontwijkers kijken niet naar de richting van de werper.
+- De ontwijkers groeperen in een hoek en duwen elkaar van het speelveld.
+- De ontwijkers lopen naar de kant van de werper op het speelveld en kunnen vervolgens niet meer geraakt worden.
+- De ontwijkers kijken niet naar de richting van de werper.
 
-Door deze gedragingen is de Cumulatieve Reward van de dodger zeer inconsistent zoals in de grafiek te zien is. Hieruit werd er besloten dat de omgeving en de Ontwijkers nog niet volledig klaar zijn om te trainen.
+Door deze gedragingen is de Cumulatieve Reward van de dodger zeer inconsistent zoals in de grafiek te zien is. Hieruit werd er besloten dat de omgeving en de ontwijkers nog niet volledig klaar zijn om te trainen.
 
 ### Training 2
 
@@ -853,16 +866,16 @@ Door deze gedragingen is de Cumulatieve Reward van de dodger zeer inconsistent z
 
 __Aanpassingen in deze training:__
 
-- Extra Ray Perception sensoren die naar de grond kijken op de X en Y -as. Hierdoor hebben de Ontwijkers een beter zicht of ze op het speelveld staan.
-- De Ontwijkers straffen wanneer ze tegen elkaar botsen. Hierdoor moeten de Ontwijkers elkaar niet van het veld duwen.
-- De werper gooit de bal nauwkeuriger naar de ontwijkers. Hierdoor kunnen de Ontwijkers beter leren te ontwijken.
+- Extra `Ray Perception` sensoren die naar de grond kijken op de X- en Y-as. Hierdoor hebben de ontwijkers een beter zicht of ze op het speelveld staan.
+- De ontwijkers straffen wanneer ze tegen elkaar botsen. Hierdoor moeten de ontwijkers elkaar niet van het veld duwen.
+- De werper gooit de bal nauwkeuriger naar de ontwijkers. Hierdoor kunnen de ontwijkers beter leren te ontwijken.
 
 __Gedragingen:__
 
-- De Ontwijkers blijven binnen het speelveld maar gaan nog steeds naar de kant van de werper op het speelveld.
-- De Ontwijkers kijken niet naar de richting van de werper.
+- De ontwijkers blijven binnen het speelveld maar gaan nog steeds naar de kant van de werper op het speelveld.
+- De ontwijkers kijken niet naar de richting van de werper.
 
-Uit de grafiek kan men afleiden dat de resultaten consistenter zijn. Het valt nog steeds op dat de resultaten niet positief zijn omdat de Ontwijkers de kant van de werper op het speelveld betreden.
+Uit de grafiek kan men afleiden dat de resultaten consistenter zijn. Het valt nog steeds op dat de resultaten niet positief zijn omdat de ontwijkers de kant van de werper op het speelveld betreden.
 
 ### Training 3
 
@@ -870,17 +883,17 @@ Uit de grafiek kan men afleiden dat de resultaten consistenter zijn. Het valt no
 
 __Aanpassingen in deze training:__
 
-- Speelveld in 2 delen opgesplits zodat de kant van de werper en de kant van de ontwijkers verschillende tags hebben.
+- Speelveld in 2 delen opgesplitst zodat de kant van de werper en de kant van de ontwijkers verschillende tags hebben.
 - Tags van beide kanten van het speelveld toegevoegd aan de Ray Perception sensoren.
-- Enkel de nodige tags in de Ray Perception sensoren toegevoegd.
+- Enkel de nodige tags in de `Ray Perception` sensoren toegevoegd.
 
 __Gedragingen:__
 
-- De Ontwijkers blijven binnen het speelveld en gaan niet naar de kant van de werper.
-- De Ontwijkers kijken niet naar de richting van de werper.
-- De Ontwijkers verliezen veel Cummalatieve Reward doordat ze tegen elkaar botsen.
+- De ontwijkers blijven binnen het speelveld en gaan niet naar de kant van de werper.
+- De ontwijkers kijken niet naar de richting van de werper.
+- De ontwijkers verliezen veel Cummalatieve Reward doordat ze tegen elkaar botsen.
 
-Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Dit komt omdat de Ontwijkers niet naar de richting van de werper kijken en dus de ballen niet zien aankomen. Een andere reden waarom dit gebeurt is omdat de Ontwijkers tegen elkaar botsen om de bal te ontwijken en vervolgens een negatieve Cummalatieve Reward krijgen.
+Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Dit komt omdat de ontwijkers niet naar de richting van de werper kijken en dus de ballen niet zien aankomen. Een andere reden waarom dit gebeurt is omdat de ontwijkers tegen elkaar botsen om de bal te ontwijken en vervolgens een negatieve Cummalatieve Reward krijgen.
 
 ### Training 4
 
@@ -888,14 +901,14 @@ Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Dit 
 
 __Aanpassingen in deze training:__
 
-- De punishment wanneer de Ontwijkers tegen elkaar botsen is verwijderd.
+- De punishment wanneer de ontwijkers tegen elkaar botsen is verwijderd.
 
 __Gedragingen:__
 
-- De Ontwijkers kijken niet naar de richting van de werper.
-- De Ontwijkers verliezen de meeste Cummalatieve Reward door geraakt te worden door de bal.
+- De ontwijkers kijken niet naar de richting van de werper.
+- De ontwijkers verliezen de meeste Cummalatieve Reward door geraakt te worden door de bal.
 
-Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. De oorzaak hiervan is omdat de Ontwijkers niet altijd naar de juiste richting zien om de ballen te zien aankomen. Hierdoor worden ze geraakt en verliezen ze de meeste Cummalatieve Reward.
+Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. De oorzaak hiervan is omdat de ontwijkers niet altijd naar de juiste richting zien om de ballen te zien aankomen. Hierdoor worden ze geraakt en verliezen ze de meeste Cummalatieve Reward.
 
 ### Training 5
 
@@ -903,48 +916,48 @@ Uit de grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. De o
 
 __Aanpassingen in deze training:__
 
-- De Ontwijkers kunnen niet meer rond hun Y-as draaien.
+- De ontwijkers kunnen niet meer rond hun Y-as draaien.
 
 __Gedragingen:__
 
-- De Ontwijkers ontwijken de ballen beter omdat ze altijd naar de werper zien.
-- De Ontwijkers verliezen de meeste Cummalatieve Reward door geraakt te worden door de bal.
+- De ontwijkers ontwijken de ballen beter omdat ze altijd naar de werper zien.
+- De ontwijkers verliezen de meeste Cummalatieve Reward door geraakt te worden door de bal.
 
-Uit deze grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Ongeacht de negatieve resulaten ontwijken de Ontwijkers de ballen wel goed.
-De oorzaak van de negatieve resultaten is dat de logica om de ballen te werpen te nauwkeurig en te snel is. Hierdoor kunnen de Ontwijkers de ballen moeilijk ontwijken.
+Uit deze grafiek kan men afleiden dat de resultaten nog steeds negatief zijn. Ongeacht de negatieve resultaten zetten de ontwijkers zich wel goed in om de bal te ontwijken.
+De oorzaak van de negatieve resultaten is dat de logica om de ballen te werpen te nauwkeurig en te snel is. Hierdoor kunnen de ontwijkers de ballen moeilijk ontwijken.
 
 ## VR instellingen
 
 ### Unity instellingen
 
-Om een VR applicatie te creëren voor de Oculus Quest 2 dient er een .apk file gebuild te worden. Maar eerst moet de package: "XR Interaction Toolkit" geïnstalleerd worden via de package manager. De build settings dienen vervolgens veranderd te worden. "File  > Build Settings > Android > Switch Platform".
+Om een VR applicatie te creëren voor de Oculus Quest 2 dient er een .apk file gebuild te worden. Maar eerst moet de package: `XR Interaction Toolkit` geïnstalleerd worden via de package manager. De build settings dienen vervolgens veranderd te worden. "File  > Build Settings > Android > Switch Platform".
 
-![One-pager](./Afbeeldingen/Build_Settings.png)
+![Build Settings](./Afbeeldingen/Build_Settings.png)
 
 Vervolgens dienen de player settings voor Oculus nog geconfigureerd te worden. "Player Settings > XR Plug-in Management > Android Settings" en vink "Oculus"aan.
 
-Nu de instelling klaar zijn, wordt er een XR rig voor de speler toegevoegd. Deze wordt op de locatie gezet waar de speler staat. Voor VR Dodgeball mag dit een "stationary XR Rig" zijn.
+Nu de instelling klaar zijn, wordt er een `XR rig` voor de speler toegevoegd. Deze wordt op de locatie gezet waar de speler staat. Voor VR Dodgeball mag dit een "stationary XR Rig" zijn.
 
-![One-pager](./Afbeeldingen/add_XR_Rig.png)
+![Add XR Rig](./Afbeeldingen/add_XR_Rig.png)
 
 Wanneer het Unity project klaar is om in de Quest geladen te worden kan het .apk file gebuild worden. "File > Build Settings > Android > Build".
 
 ### Quest instellingen
 
-Voor het mogelijk is om .apk applicaties te installeren op de Quest 2, moet developer modus worden ingeschakelt voor de de headset. "Smartphone Oculus Applicatie > Settings > OculusQuest 2 [*Model Number*] > More Settings > Developer Mode". Verbindt vervolgens de headset met USB aan een Computer en bevestig de pop-up in de headset.
+Voor het mogelijk is om .apk applicaties te installeren op de Quest 2, moet developer modus worden ingeschakelt voor de de headset. "Smartphone Oculus Applicatie > Settings > OculusQuest 2 [*Model Number*] > More Settings > Developer Mode". Verbindt vervolgens de headset met USB aan een computer en bevestig de pop-up in de headset.
 
-![One-pager](./Afbeeldingen/data_access.jpeg)
-![One-pager](./Afbeeldingen/OculusLinkCable-Anker.png)
+![Data acces](./Afbeeldingen/data_access.jpeg)
+![Oculus Link Cable](./Afbeeldingen/OculusLinkCable-Anker.png)
 
 ### SideQuest instellingen
 
 Om .apk files op de Quest te laden is een externe applicatie nodig: "SideQuest". In de applicatie is er een zichtbaar signaal dat aangeeft wanneer de Quest correct is verbonden.
 
-![One-pager](./Afbeeldingen/connected_quest.png)
+![Connected Quest](./Afbeeldingen/connected_quest.png)
 
 Laad vervolgens het .apk file in door op het symbool rechts bovenaan te klikken.
 
-![One-pager](./Afbeeldingen/inladen_quest.png)
+![Inladen Quest](./Afbeeldingen/inladen_quest.png)
 
 Vervolgens is er nog een bevestiging te zien als het .apk file correct op de quest is geladen.
 
@@ -954,11 +967,11 @@ Ga naar: "Apps > Unknown sources" om de geïnstalleerde game terug te vinden.
 
 ## Conclusie
 
-Tijdens dit project hebben we dus een VR Trefbal game waarbij de speler ballen moet gooien naar Ontwijkers die getraint zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
+Tijdens dit project hebben we een VR Trefbal game waarbij de speler ballen moet gooien naar ontwijkers die getraind zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
 In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken.
 
 ## Bronnen
 
-- **Oculus Link Cable** - https://uploadvr.com/oculus-link-recommended-usb-cable/
-- Bron naar Mr D'haese cursus toevoegen
-- Bron naar throw functie ofzo toevoegen.
+- Heaney, D. (2019, November 29). Upload VR. UploadVR. <https://uploadvr.com/oculus-link-recommended-usb-cable/>
+- D’Haese, D. D. (2020, November 18). VR Experience (ML-agents). VR Experience (ML-Agents). <https://ddhaese.github.io/Course_ML-Agents/>
+- Technologies, U. (2020). Unity - Scripting API: Vector3. Unity Documentation. <https://docs.unity3d.com/ScriptReference/Vector3.html>
