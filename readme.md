@@ -72,7 +72,7 @@ De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij o
 - Buiten het speelveld van de ontwijkers: - 0.5
 - Geraakt door bal: - 0.5
 
-![Rewards](Afbeeldingen/Rewards.png)
+![Rewards](Afbeeldingen/rewards.png)
 
 ### Beschrijving en opbouw objecten
 
