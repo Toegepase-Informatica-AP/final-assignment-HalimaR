@@ -97,7 +97,7 @@ public class Dodger : Agent
             isOnField = false;
             canJump = true;
         }
-        if(collision.gameObject.tag == "Ball")
+        if(collision.gameObject.tag == "Ball" && !isHit)
         {
             AddReward(-0.5f);
             isHit = true;

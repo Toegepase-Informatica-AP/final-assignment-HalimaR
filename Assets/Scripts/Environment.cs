@@ -25,6 +25,7 @@ public class Environment : MonoBehaviour
     private float currentScore = 0f;
     private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
     private float largeScale = 2f;
+    private float totalScoreOfDestroyedDodgers;
     private bool throwing = true;
     private bool spawnDodgers;
     private bool spawningPowerups = true;
@@ -91,7 +92,7 @@ public class Environment : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        currentScore = 0f;
+        currentScore = totalScoreOfDestroyedDodgers;
         
         if(episodeTime >= 0)
         {
@@ -112,7 +113,7 @@ public class Environment : MonoBehaviour
                     else if (dodgersList[counter].isHit)
                     {
                         //End episode for dodger which has been hit
-                        Debug.Log(dodgersList[counter].name + "has been hit");
+                        totalScoreOfDestroyedDodgers += dodgersList[counter].GetCumulativeReward();
                         dodgersList[counter].EndEpisode();
                         Destroy(dodgersList[counter].gameObject);
                         dodgersList.Remove(dodgersList[counter]);
@@ -163,6 +164,7 @@ public class Environment : MonoBehaviour
         throwing = false;
         spawningPowerups = false;
         ballHasBeenTakenNonTraining = true;
+        totalScoreOfDestroyedDodgers = 0f;
     }
     public void SpawnDodgers() 
     {
@@ -202,7 +204,7 @@ public class Environment : MonoBehaviour
 
             //Random position
             float ballX = Random.Range(transform.position.x -1f, transform.position.x + 1f);
-            float ballY = Random.Range(transform.position.y + 0.5f,transform.position.y + 3f);
+            float ballY = Random.Range(transform.position.y + 0.8f,transform.position.y + 3f);
             float ballZ = transform.position.z + 18f;
             Vector3 ballPositie = new Vector3(ballX, ballY, ballZ);
             ball.transform.position = ballPositie;
@@ -272,7 +274,6 @@ public class Environment : MonoBehaviour
                     Destroy(dodgersList[counter].gameObject);
                 }
                 dodgersList.RemoveAt(counter);
-                Debug.Log(dodgersList.Count);
             }
         }
     }

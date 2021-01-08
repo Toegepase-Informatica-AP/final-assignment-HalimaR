@@ -474,7 +474,7 @@ MonoBehaviour:
     VectorActionSpaceType: 0
   m_Model: {fileID: 5022602860645237092, guid: 6258fe8a03047ce498e16981d699a524, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
+  m_BehaviorType: 1
   m_BehaviorName: Dodger
   TeamId: 0
   m_UseChildSensors: 1

@@ -2952,7 +2952,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5731466371090352169}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6195578452703300707}
@@ -3450,20 +3450,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba06c1d8ea432994d910a8e2054795cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  largeTimer: 10
+  ballAverageSpawnTimer: 1
   TrainingMode: 1
   ballHasBeenTakenNonTraining: 0
-  ballAverageSpawnTimer: 1
+  powerUpBall: 0
   ballPrefab: {fileID: 2510699352357610179, guid: 94c79885bd70a1848bcf8868e90585ff,
     type: 3}
   dodgerPrefab: {fileID: 5469381401573265143, guid: 5d20d452a21c4294596192d943fd2572,
     type: 3}
-  dodgersList: []
-  selectedDodger: 
   powerUpSpawnLocation: {fileID: 6089809911288973206}
   powerUpPrefab: {fileID: 1234220812902223670, guid: 95155fbb8f96bac449bcd1c1152535f1,
     type: 3}
   powerUpList: []
-  powerUpBall: 0
+  dodgersList: []
 --- !u!1 &6195578452650089466
 GameObject:
   m_ObjectHideFlags: 0
