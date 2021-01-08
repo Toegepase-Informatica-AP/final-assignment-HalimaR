@@ -2,7 +2,7 @@
     "name": "root",
     "metadata": {
         "timer_format_version": "0.1.0",
-        "start_time_seconds": "1610068317",
+        "start_time_seconds": "1610069178",
         "python_version": "3.8.5 (default, Sep  3 2020, 21:29:08) [MSC v.1916 64 bit (AMD64)]",
         "command_line_arguments": "C:\\Anaconda\\envs\\ml-agents\\Scripts\\mlagents-learn Dodger.yml --run-id Dodger_run_15 --force",
         "mlagents_version": "0.21.1",
@@ -10,36 +10,36 @@
         "communication_protocol_version": "1.2.0",
         "tensorflow_version": "2.3.1",
         "numpy_version": "1.19.2",
-        "end_time_seconds": "1610068352"
+        "end_time_seconds": "1610069193"
     },
-    "total": 35.7168659,
+    "total": 15.4345507,
     "count": 1,
-    "self": 0.29624760000000805,
+    "self": 0.3018262000000025,
     "children": {
         "run_training.setup": {
-            "total": 0.006232100000000074,
+            "total": 0.006004799999999921,
             "count": 1,
-            "self": 0.006232100000000074
+            "self": 0.006004799999999921
         },
         "TrainerController.start_learning": {
-            "total": 35.414386199999996,
+            "total": 15.126719699999999,
             "count": 1,
-            "self": 0.0005000999999964506,
+            "self": 0.00045139999999577185,
             "children": {
                 "TrainerController._reset_env": {
-                    "total": 35.4136083,
+                    "total": 15.1258549,
                     "count": 1,
-                    "self": 35.4136083
+                    "self": 15.1258549
                 },
                 "trainer_threads": {
-                    "total": 7.999999951380232e-07,
+                    "total": 8.999999998593466e-07,
                     "count": 1,
-                    "self": 7.999999951380232e-07
+                    "self": 8.999999998593466e-07
                 },
                 "TrainerController._save_models": {
-                    "total": 0.00027700000000407954,
+                    "total": 0.00041250000000303544,
                     "count": 1,
-                    "self": 0.00027700000000407954
+                    "self": 0.00041250000000303544
                 }
             }
         }
