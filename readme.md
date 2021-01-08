@@ -19,17 +19,17 @@
 
 ## Inleiding
 
-Voor het vak VR Experience hebben wij als project gekozen om een VR Trefbal spel te maken. Bij dit spel is het de bedoeling dat de speler drie ontwijkers probeert te raken met een bal. Deze ontwijkers zijn AI's die we getraind hebben voor dit project.
+Voor het vak VR Experience hebben wij als project gekozen om een VR Trefbal spel te maken. Bij dit spel is het de bedoeling dat de speler drie ontwijkers probeert te raken met een bal. Deze ontwijkers zijn agents die we getraind hebben aan de hand van AI.
 
 ## Samenvatting
 
-Met deze handleiding geven wij stap voor stap uitleg hoe men van een leeg Unity project kan bekomen aan ons VR Trefbal spel. Er zal uitgelegd worden welke spelobjecten wij hebben aangemaakt, hoe deze zich kunnen gedragen in de spel omgeving en welke andere installaties er benodigd zijn.
+Met deze handleiding geven wij stap voor stap uitleg hoe men van een leeg Unity project kan bekomen aan ons VR Trefbal spel. Er zal uitgelegd worden welke spelobjecten wij hebben aangemaakt, hoe deze zich kunnen gedragen in de spel omgeving en welke andere installaties er nodig zijn.
 
 ## Methoden
 
 ### Installaties
 
-Voor het spel werkende krijgen zijn er verschillende installaties vereist:
+Om het spel werkende krijgen zijn er verschillende installaties nodig:
 
 - Unity: 2019.4.10f1
 - ML-Agents: 1.0.5
@@ -44,7 +44,7 @@ Het doel van het spel is dat de speler de ontwijkers uitschakelt met behulp van 
 
 Tijdens het spel zullen er "power-ups" tevoorschijn komen. Deze power-ups bevinden zich op willekeurige plekken boven het veld. Als de speler een power-up kan raken door er een bal tegen te gooien zal die power-up voor een gelimiteerde tijd geactiveerd worden. Dat zorgt er dan voor dat de ballen die speler kan gooien groter zijn dan normaal. Hierdoor zal het dus makkelijker zijn om de ontwijkers te raken.
 
-Het spel duurt maximaal 120 seconden. Als de speler binnen deze tijd de drie ontwijkers krijgt uitgeschakeld is het spel gewonnen. Als de tijd op is voor alle ontwijkers zijn uitgeschakeld is het spel verloren en moet de speler opnieuw beginnen.
+Het spel duurt maximaal 120 seconden. Als de speler binnen deze tijd de drie ontwijkers uitgeschakeld wint de speler het spel. Als de tijd op is voor alle ontwijkers zijn uitgeschakeld is het spel verloren en moet de speler opnieuw beginnen.
 
 ### Observaties, acties en beloningen
 
@@ -62,14 +62,20 @@ Dit zijn eveneens de tags die de andere gameobjecten bevatten zodat de ontwijker
 
 #### Acties
 
-De ontwijker kan rondbewegen en springen, zodat hij de bal kan ontwijken. De speler zelf kan niet bewegen, maar kan wel de bal gooien naar de ontwijkers. De speler kan ook de bal gooien naar de power-ups om zo grotere ballen te krijgen.
+De ontwijker heeft 3 verschillende acties:
+
+1. Zijwaarts bewegen
+1. Naar voor/Naar achter bewegen
+1. Springen
+
+De speler zelf kan niet bewegen, maar kan wel de bal gooien naar de ontwijkers. De speler kan ook de bal gooien naar de power-ups om zo grotere ballen te krijgen.
 
 #### Beloningen
 
 De ontwijker krijgt verscheidene beloningen en straffen voor de acties die hij onderneemt tijdens het spelverloop:
 
-- Op het speelveld: + 0.01
-- Buiten het speelveld van de ontwijkers: - 0.5
+- Op het speelveld: + 0.01 per seconde
+- Buiten het speelveld van de ontwijkers: - 0.5 per seconde
 - Geraakt door bal: - 0.5
 
 ![Rewards](Afbeeldingen/rewards.png)
@@ -135,32 +141,33 @@ Men begint met enkele publieke object-variabelen.
 - `MAXTIME`: Toont aan hoelang elke episode zal duren.
 - `ballAverageSpawnTimer`: Geeft weer hoelang het duurt voor een bal spawnt.
 - `TrainingMode`: Is bedoelt voor het trainen van de ML-agent, wanneer dit op true staat zullen de ballen vanzelf geworpen worden.
-- `ballHasBeenTakenNonTraining`: Zal de speler zelf de bal kunnen oprapen en de mogelijkheid hebben om te hooien.
+- `ballHasBeenTakenNonTraining`: Zal de speler zelf de bal kunnen oprapen en de mogelijkheid hebben om te gooien.
 - `powerUpBall`: Wordt nagekeken of de bal een power-up heeft geraakt.
-- `ballPrefab`: Komt de prefab object van de bal.
-- `dodgerPrefab`: Komt de prefab object van de dodger.
+- `ballPrefab`: Hierin wordt de prefab van de bal geplaatst.
+- `dodgerPrefab`: Hierin wordt de prefab van de dodger geplaatst.
 - `powerUpSpawnLocation`: Is de locatie waar in de power-ups mogen spawnen.
-- `powerUpPrefab`: Komt de prefab object van de power-up.
+- `powerUpPrefab`: Hierin wordt de prefab van de power-up geplaatst.
 - `powerUpList`: Lijst waar de power-ups in toegevoegd worden.
 - `dodgersList`: Lijst waar de dodgers in toegevoegd worden.
 
 De volgende variabelen zijn de private objecten.
 
-- `POWERUP_SPAWNTIMER`: Geeft aan hoelang het duurt vooralleer een power-up zal spawnen.
+- `POWERUP_SPAWNTIMER`: Geeft aan hoelang het duurt voor dat een power-up zal spawnen.
 - `episodeTime`: Toont hoelang elke episode zal duren.
-- `ballRespawnTime`: Geeft aan hoelang het duurt vooralleer een bal zal spawnen.
+- `ballRespawnTime`: Geeft aan hoelang het duurt voor dat een bal zal spawnen.
 - `currentScore`: Toont de score.
 - `currentUpgradeTimer`: Zorgt ervoor dat er een timer is tussen het werpen van de bal.
-- `largeScale`: Zorgt ervoor wanneer een bal tegen een power-up komt de bal groter word.
+- `largeScale`: Zorgt ervoor wanneer een bal tegen een power-up komt dat de bal groter wordt.
+- `totalScoreOfDestroyedDodgers`: Houdt de score van de verwijderde ontwijkers bij.
 - `largeTimer`: Zorgt ervoor dat de power-up een bepaalde tijd actief blijft.
 - `throwing`: Is vooral bedoelt voor het trainen van de ML-agent, die zorgt ervoor dat de `ballSpawner` wordt aangeroepen.
 - `spawnDodgers`: Spawnt de dodgers.
 - `spawningPowerups`: Spawnt de power-ups.
 - `random`: Is een variabelen die gebruikt wordt om de random positie van een dodger op te halen.
-- `ballSpawnpointNonTraining`: Wordt de spawn point gekoppeld.
-- `balls`: Wordt de GameObject bal gekoppeld.
-- `dodgers`: Wordt de GameObject dodger gekoppeld.
-- `standardPositionDL`, `standardPositionDM`, `standardPositionDR` zijn de spawn posities van de dodegers.
+- `ballSpawnpointNonTraining`: Hierin wordt het spawnpoint van de bal bewaard.
+- `balls`: Wordt de GameObject bal aan gekoppeld.
+- `dodgers`: Wordt de GameObject dodger aan gekoppeld.
+- `standardPositionDL`, `standardPositionDM`, `standardPositionDR` zijn de spawn posities van de dodgers.
 - `scoreboard`: Geeft de score weer.
 - `powerUpSpawnBox`: Zorgt ervoor dat de power-ups niet buiten het speelveld spawnen.
 
@@ -221,7 +228,7 @@ void Update()
     }
 ```
 
-In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de `if-statement` naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geüpdatet. Dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de `for-loop` wordt de score aan het `scoreboard` toegekend.
+In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de `if-statement` naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geüpdate. Dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de `for-loop` wordt de score aan het `scoreboard` toegekend.
 
 ```cs (Environment.cs)
 void FixedUpdate()
@@ -278,7 +285,7 @@ De `SpawnDodgersGameobject` methode spawnt de dodgers elke keer als een episode 
     }
 ```
 
-In de `ResetEnvironment` methode word het volledige environment gereset. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt, dit word ook bij de `dodgers` gedaan. De respawn van de dodgers, de `episodeTime` en de `currentUpgradeTimer` worden hier ook gedaan. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op `True` gezet en de `throwing`, `spawningPowerups` worden op `False` gezet.
+In de `ResetEnvironment` methode word het volledige environment gereset. De power-ups worden verwijderd, de `balls` worden ook leeg gemaakt, dit word ook bij de `dodgers` gedaan. De respawn van de dodgers, de `episodeTime` en de `currentUpgradeTimer` worden hier ook gereset. De booleans `spawnDodgers`, `ballHasBeenTakenNonTraining` worden op `True` gezet en de `throwing`, `spawningPowerups` worden op `False` gezet.
 
 ```cs (Environment.cs)
  public void ResetEnvironment()
@@ -461,9 +468,9 @@ Dit zijn alle properties die in deze klasse worden gedefinieerd
 
 - `MovingSpeed`: Bepaalt de snelheid waarin de ontwijker kan lopen.
 - `Force`: De kracht waarmee de ontwijker kan springen.
-- `body`: Is van type `Rigidbody` en wordt bijgehouden zodat er krachten gelijk springen kunnen worden uitgeoefend op het fysieke object in de wereld.
-- `canJump`: Is een vanzelfsprekende boolean.
-- `isHit`: Een boolean die true is als de dodger geraakt is. Deze property wordt voor de rest niet binnen het `Dodger` script zelf gebruikt maar is wel belangrijk voor andere scripts. Daarom dat het een public property is.
+- `body`: Is van type `Rigidbody` en wordt bijgehouden zodat er krachten zoals springen kunnen worden uitgeoefend op het fysieke object in de wereld.
+- `canJump`: Is een boolean die bijhoudt of de onwtijker kan springen.
+- `isHit`: Een boolean die true is als de ontwijker geraakt is. Deze property wordt voor de rest niet binnen het `Dodger` script zelf gebruikt maar is wel belangrijk voor andere scripts. Daarom dat het een public property is.
 - `timePast`: Wordt gebruikt om te bepalen wanneer een ontwijker een reward krijgt en/of van afgenomen wordt.
 - `isOnField`: Geeft aan of de ontwijker in het veld is of niet.
 
@@ -971,7 +978,7 @@ Ga naar: "Apps > Unknown sources" om de geïnstalleerde game terug te vinden.
 ## Conclusie
 
 Tijdens dit project hebben we een VR Trefbal game waarbij de speler ballen moet gooien naar ontwijkers die getraind zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
-In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken.
+In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken voor de ontwijkers. Dit zou bijvoorbeeld kunnen worden gedaan aan de hand van AI om een werper te trainen.
 
 ## Bronnen
 
