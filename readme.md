@@ -755,7 +755,8 @@ Het object speler heeft geen gedragingen. De speler zelf in de VR-omgeving gaat 
 
 #### Ontwijker gedragingen
 
-Ontwijkers gaan aan de hand van het speelveld en de ballen zich zodanig proberen te manouvreren zodat ze de ballen kunnen ontwijken. Hoe langer ze zichzelf in leven kunnen houden, des te meer punten ze krijgen. Voor de AI krijgt de ontwijker een `BehaviourParameters` script mee. Voor de acties die de ontwijker kan ondernemen krijgt de ontwijker het Dodger script mee. De irissen van de dodger krijgen het `Ray Perception Sensor 3D` script mee om hun omgeving te kunnen observeren.
+Ontwijkers gaan aan de hand van het speelveld en de ballen zich zodanig proberen te manouvreren zodat ze de ballen kunnen ontwijken. Hoe langer ze zichzelf in leven kunnen houden, hoe meer punten ze zullen krijgen. Voor de AI krijgt de ontwijker een `BehaviorParameters` script mee. Voor de acties die de ontwijker kan ondernemen krijgt de ontwijker het Dodger script mee. De irissen van de dodger krijgen het `Ray Perception Sensor 3D` script mee om hun omgeving te kunnen observeren.
+Wanneer de Ontwijkers getraind hebben kan het getraind brein op de Ontwijker prefab worden geplaatst op het veld `Model` onder `BehaviorParameters`.
 
 ![Dodger properties](./Afbeeldingen/DodgerProperties.jpg)
 
@@ -793,7 +794,7 @@ Om de ontwijkers te trainen hebben we volgende training configuratie gebruikt.
 
 ### Dodger.yaml
 
-```yaml
+```yml
 behaviors:
   Dodger:
     trainer_type: ppo
@@ -835,7 +836,7 @@ De volgende commando's zijn nodig om de training uit te voeren:
 Om de training te starten:
 
 ```c
-mlagents-learn Dodger.yaml --run-id [Naam van deze training]
+mlagents-learn Dodger.yml --run-id [Naam van deze training]
 ```
 
 Om de resultaten in grafieken te zien:
