@@ -1,4 +1,32 @@
 {
+    "Dodger": {
+        "checkpoints": [
+            {
+                "steps": 49951,
+                "file_path": "results\\Dodger_run_15\\Dodger\\Dodger-49951.nn",
+                "reward": -0.41277778355611694,
+                "creation_time": 1610069879.7230835
+            },
+            {
+                "steps": 99943,
+                "file_path": "results\\Dodger_run_15\\Dodger\\Dodger-99943.nn",
+                "reward": -0.5473913053131622,
+                "creation_time": 1610070142.487193
+            },
+            {
+                "steps": 130919,
+                "file_path": "results\\Dodger_run_15\\Dodger\\Dodger-130919.nn",
+                "reward": -0.7033333385156261,
+                "creation_time": 1610070303.206415
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 130919,
+            "file_path": "results\\Dodger_run_15\\Dodger.nn",
+            "reward": -0.7033333385156261,
+            "creation_time": 1610070303.206415
+        }
+    },
     "metadata": {
         "stats_format_version": "0.1.0",
         "mlagents_version": "0.21.1",

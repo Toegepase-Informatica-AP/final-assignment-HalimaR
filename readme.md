@@ -90,6 +90,7 @@ laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op
 
 ```cs (Environment.cs)
     public const float MAXTIME = 120f;
+    public float largeTimer = 10f;
     public float ballAverageSpawnTimer = 2f;
     public bool TrainingMode = true;
     public bool ballHasBeenTakenNonTraining;
@@ -107,19 +108,20 @@ laten we nu het script aanpassen. In de Unity Project window dubbel klikt men op
     private float currentScore = 0f;
     private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
     private float largeScale = 2f;
-    private float largeTimer = 10f;
+    private float totalScoreOfDestroyedDodgers;
     private bool throwing = true;
     private bool spawnDodgers;
     private bool spawningPowerups = true;
     private System.Random random = new System.Random();
     private GameObject ballSpawnpointNonTraining;
-    private GameObject balls; 
+    private GameObject balls;
     private GameObject dodgers;
     private Vector3 standardPositionDL;
     private Vector3 standardPositionDM;
     private Vector3 standardPositionDR;
     private TextMeshPro scoreboard;
     private BoxCollider powerUpSpawnBox;
+
 ```
 
 We beginnen met enkele publieke object-variabelen.
@@ -216,11 +218,13 @@ void Update()
 In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als dit wel het geval is worden alle episodes beëindigd en de environment gereset. Dan wordt er in de if statement naar de `dodgersList` gekeken. Wanneer de `dodgersList` leeg is wordt de `ResetEnvironment` uitgevoerd. Als de lijst niet leeg is wordt er gekeken of één van de dodgers geraakt is door de bal. Als de dodger niet geraakt is wordt de scoreboard geupdate dit gebeurt via de getter van de interne `GetCumulativeReward` variabele op de `Dodger` klasse. Als de dodger wel geraakt is geraakt wordt de `EndEpisode` uitgevoerd, die dodger wordt dan ook destroyed en verwijderd uit de list. Buiten de for loop wordt de score aan de `scoreboard` toegekend.
 
 ```cs (Environment.cs)
- void FixedUpdate()
+void FixedUpdate()
     {
-        currentScore = 0f;
+        currentScore = totalScoreOfDestroyedDodgers;
+        
         if(episodeTime >= 0)
         {
+            //Reset environment if dodgers are dead
             if (dodgersList.Count == 0)
             {
                 ResetEnvironment();
@@ -231,20 +235,25 @@ In de `FixedUpdate` wordt er gekeken of de `episodeTime` niet verlopen is. Als d
                 {
                     if (!dodgersList[counter].isHit)
                     {
+                        //Get score from dodgers which are still alive
                         currentScore += dodgersList[counter].GetCumulativeReward();
                     }
                     else if (dodgersList[counter].isHit)
                     {
+                        //End episode for dodger which has been hit
+                        totalScoreOfDestroyedDodgers += dodgersList[counter].GetCumulativeReward();
                         dodgersList[counter].EndEpisode();
                         Destroy(dodgersList[counter].gameObject);
                         dodgersList.Remove(dodgersList[counter]);
                     }
                 }
+                //Show score and episode timer
                 scoreboard.text = currentScore.ToString("f3") + "\n" + episodeTime.ToString("f0");
             }
             episodeTime = episodeTime - Time.deltaTime;
         } else
         {
+            //End all episodes en reset environment if episoder timer = 0
             EndAllEpisodes();
             ResetEnvironment();
         }
@@ -285,6 +294,7 @@ In de `ResetEnvironment` methode word het voledige environment gereset. De power
         throwing = false;
         spawningPowerups = false;
         ballHasBeenTakenNonTraining = true;
+        totalScoreOfDestroyedDodgers = 0f;
     }
 ```
 
@@ -318,7 +328,7 @@ Voor de methode `BallSpawner` heeft met gekozen voor een `StartCoroutine`, hierm
         while (TrainingMode)
         {
             yield return new WaitForSeconds(ballRespawnTime);
-            ballRespawnTime = Random.Range(ballAverageSpawnTimer * 0.5f, ballAverageSpawnTimer * 1.5f);
+            ballRespawnTime = Random.Range(ballAverageSpawnTimer * 0.8f, ballAverageSpawnTimer * 1.5f);
             GameObject ball = Instantiate(ballPrefab);
             if (powerUpBall == true){
                 ball.transform.localScale = new Vector3(largeScale, largeScale, largeScale);
@@ -416,15 +426,13 @@ Deze bestaat uit een Capsule als lichaam met één grote witte Sphere als oog en
 
 Omdat de Ontwijker getraind zal worden moet deze Ray Perceptions sensors hebben om zijn omgeving waar te nemen. De Ontwijker is voorzien van 5 Ray Perception sensors.
 
-1. Ray om rechtdoor te zien.
-
-1. Ray om in een schuine hoek omhoog te zien.
-
-1. Ray om in een schuine hoek omlaag te zien.
-
-1. Ray om recht naar beneden te zien volgens de X-as.
-
-1. Ray om recht naar beneden te zien volgens de Y-as.
+| Ray | Tags | Richting |
+| --- | ---- | -------- |
+| 1   | Player, Ball, Dodger | Rechtdoor |
+| 2   | Player, Ball, Dodger | Schuine hoek omhoog |
+| 3   | Player, Ball, Dodger, PlayingGround, Ground | Schuine hoek omlaag |
+| 4   | PlayingGround, Ground | Naar beneden volgens X-as |
+| 5   | PlayingGround, Ground | Naar beneden volgens Y-as |
 
 ![RayPerceptions](./Afbeeldingen/RayPerceptions.jpg)
 
@@ -564,7 +572,7 @@ public void OnCollisionEnter(Collision collision)
             isOnField = false;
             canJump = true;
         }
-        if(collision.gameObject.tag == "Ball")
+        if(collision.gameObject.tag == "Ball" && !isHit)
         {
             AddReward(-0.5f);
             isHit = true;
@@ -949,8 +957,8 @@ Ga naar: "Apps > Unknown sources" om de geïnstalleerde game terug te vinden.
 Tijdens dit project hebben we dus een VR Trefbal game waarbij de speler ballen moet gooien naar Ontwijkers die getraint zijn door AI. Uit de resultaten kan er worden geconcludeerd dat het brein nog niet volledig correct werkt. Er zijn nog veel fluctuaties in de resultaten en deze zouden in de game niet meer aanwezig mogen zijn. Ongeacht deze fluctuaties kan het spel wel worden gespeeld en gaan de ontwijkers de ballen ontwijken.
 In de toekomst zou de logica om de ballen te werpen meer realistisch kunnen worden gemaakt zodat het niet onmogelijk wordt om de ballen te ontwijken.
 
-*Verbeteringen naar de toekomst toe*
-
 ## Bronnen
 
 - **Oculus Link Cable** - https://uploadvr.com/oculus-link-recommended-usb-cable/
+- Bron naar Mr D'haese cursus toevoegen
+- Bron naar throw functie ofzo toevoegen.
