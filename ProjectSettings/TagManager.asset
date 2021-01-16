@@ -16,6 +16,8 @@ TagManager:
   - BallList
   - MiddleLine
   - PowerUpSpawnField
+  - DodgerScoreboard
+  - ThrowerScoreboard
   layers:
   - Default
   - TransparentFX

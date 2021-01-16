@@ -22,10 +22,12 @@ public class Environment : MonoBehaviour
     private const float POWERUP_SPAWNTIMER = 15f;
     private float episodeTime = MAXTIME;
     private float ballRespawnTime;
-    private float currentScore = 0f;
+    private float currentScoreDodger = 0f;
+    private float currentScoreThrower = 3.6f;
     private float currentUpgradeTimer = POWERUP_SPAWNTIMER;
     private float largeScale = 2f;
     private float totalScoreOfDestroyedDodgers;
+    private float highscore = 0f;
     private bool throwing = true;
     private bool spawnDodgers;
     private bool spawningPowerups = true;
@@ -36,7 +38,9 @@ public class Environment : MonoBehaviour
     private Vector3 standardPositionDL;
     private Vector3 standardPositionDM;
     private Vector3 standardPositionDR;
-    private TextMeshPro scoreboard;
+    private TextMeshPro[] scoreboards;
+    private TextMeshPro scoreboardDodgers;
+    private TextMeshPro scoreboardThrower;
     private BoxCollider powerUpSpawnBox;
 
     // Start is called before the first frame update
@@ -57,7 +61,18 @@ public class Environment : MonoBehaviour
         standardPositionDR = new Vector3(-10f, 3f, -20f);
         SpawnDodgersGameobject();
         SpawnDodgers();
-        scoreboard = transform.GetComponentInChildren<TextMeshPro>();
+        scoreboards = transform.GetComponentsInChildren<TextMeshPro>();
+        for(int counter = 0; counter < scoreboards.Length; counter++)
+        {
+            if(scoreboards[counter].tag == "DodgerScoreboard")
+            {
+                scoreboardDodgers = scoreboards[counter];
+            }
+            else if(scoreboards[counter].tag == "ThrowerScoreboard")
+            {
+                scoreboardThrower = scoreboards[counter];
+            }
+        }
         powerUpSpawnBox = powerUpSpawnLocation.GetComponent<BoxCollider>();
     }
     void Update()
@@ -92,7 +107,7 @@ public class Environment : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        currentScore = totalScoreOfDestroyedDodgers;
+        currentScoreDodger = totalScoreOfDestroyedDodgers;
         
         if(episodeTime >= 0)
         {
@@ -108,7 +123,7 @@ public class Environment : MonoBehaviour
                     if (!dodgersList[counter].isHit)
                     {
                         //Get score from dodgers which are still alive
-                        currentScore += dodgersList[counter].GetCumulativeReward();
+                        currentScoreDodger += dodgersList[counter].GetCumulativeReward();
                     }
                     else if (dodgersList[counter].isHit)
                     {
@@ -120,7 +135,8 @@ public class Environment : MonoBehaviour
                     }
                 }
                 //Show score and episode timer
-                scoreboard.text = currentScore.ToString("f3") + "\n" + episodeTime.ToString("f0");
+                scoreboardDodgers.text = currentScoreDodger.ToString("f3") + "\n" + episodeTime.ToString("f0");
+                scoreboardThrower.text = $"Highscore: {highscore.ToString("f3")} \n \nScore: {(currentScoreThrower - currentScoreDodger).ToString("f3")}";
             }
             episodeTime = episodeTime - Time.deltaTime;
         } else
@@ -165,6 +181,8 @@ public class Environment : MonoBehaviour
         spawningPowerups = false;
         ballHasBeenTakenNonTraining = true;
         totalScoreOfDestroyedDodgers = 0f;
+        currentScoreThrower = 3.6f;
+        highscore = currentScoreThrower - currentScoreDodger;
     }
     public void SpawnDodgers() 
     {
