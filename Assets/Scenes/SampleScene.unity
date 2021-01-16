@@ -558,6 +558,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 177887355170226347, guid: 0a216d1cfd9c59d46ac60f2b0fe45e19,
+        type: 3}
+      propertyPath: m_TagString
+      value: ThrowerScoreboard
+      objectReference: {fileID: 0}
     - target: {fileID: 2998675417834834439, guid: 0a216d1cfd9c59d46ac60f2b0fe45e19,
         type: 3}
       propertyPath: m_Constraints
