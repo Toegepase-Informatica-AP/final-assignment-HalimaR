@@ -136,7 +136,7 @@ public class Environment : MonoBehaviour
                 }
                 //Show score and episode timer
                 scoreboardDodgers.text = currentScoreDodger.ToString("f3") + "\n" + episodeTime.ToString("f0");
-                scoreboardThrower.text = $"Highscore: {highscore.ToString("f3")} \n \nScore: {(currentScoreThrower - currentScoreDodger).ToString("f3")}";
+                scoreboardThrower.text = $"Record: {highscore.ToString("f0")} \n \nTime: {(MAXTIME - episodeTime).ToString("f0")}";
             }
             episodeTime = episodeTime - Time.deltaTime;
         } else
@@ -182,9 +182,9 @@ public class Environment : MonoBehaviour
         ballHasBeenTakenNonTraining = true;
         totalScoreOfDestroyedDodgers = 0f;
         currentScoreThrower = 3.6f;
-        if((currentScoreThrower - currentScoreDodger) > highscore)
+        if(highscore == 0f || MAXTIME - episodeTime < highscore) 
         {
-            highscore = currentScoreThrower - currentScoreDodger;
+            highscore = MAXTIME - episodeTime;
         }
     }
     public void SpawnDodgers() 
