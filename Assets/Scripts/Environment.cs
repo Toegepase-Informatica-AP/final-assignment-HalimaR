@@ -182,7 +182,10 @@ public class Environment : MonoBehaviour
         ballHasBeenTakenNonTraining = true;
         totalScoreOfDestroyedDodgers = 0f;
         currentScoreThrower = 3.6f;
-        highscore = currentScoreThrower - currentScoreDodger;
+        if((currentScoreThrower - currentScoreDodger) > highscore)
+        {
+            highscore = currentScoreThrower - currentScoreDodger;
+        }
     }
     public void SpawnDodgers() 
     {
