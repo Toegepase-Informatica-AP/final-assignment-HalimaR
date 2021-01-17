@@ -173,7 +173,6 @@ public class Environment : MonoBehaviour
         //Coroutine restarts
         StopAllCoroutines();
         //Reset Timers
-        episodeTime = MAXTIME;
         currentUpgradeTimer = POWERUP_SPAWNTIMER;
         //SpawnCheck
         spawnDodgers = true;
@@ -186,6 +185,7 @@ public class Environment : MonoBehaviour
         {
             highscore = MAXTIME - episodeTime;
         }
+        episodeTime = MAXTIME;
     }
     public void SpawnDodgers() 
     {
